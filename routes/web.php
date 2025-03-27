@@ -18,3 +18,6 @@ Route::get('/', function () {
     return view('home'); 
 });
 
+
+
+Route::resource("Marcas", MarcaController::class);
