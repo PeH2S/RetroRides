@@ -38,7 +38,7 @@ class MarcaController extends Controller
                 'stack' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
-            
+
             return redirect()->route('marcas.index')
                 ->with('erro' , 'Erro ao criar a Marca!');
         }
@@ -61,7 +61,7 @@ class MarcaController extends Controller
     {
         $marca = Marca::findOrFail($id);
         $marcas = Marca::all();
-        return view('marca.edit', compact('marca'))
+        return view('marca.edit', compact('marca'));
 
     }
 
