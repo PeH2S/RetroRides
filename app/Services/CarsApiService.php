@@ -22,11 +22,51 @@ class CarsApiService
         ];
     }
 
+    public function fetchAndStoreModelsForBrand($brandId)
+    {
+        try {
+            $response = $this->client->get("{$this->baseUrl}/cars/brands/{$brandId}/models", [
+                'headers' => $this->headers,
+                'verify' => false
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            $body = json_decode($response->getBody(), true);
+
+            Log::info("Requisição GET /cars/brands/{$brandId}/models", [
+                'status' => $statusCode,
+                'response' => $body,
+                'verify' => false
+            ]);
+
+            if ($statusCode === 200) {
+                foreach ($body as $model) {
+                    CarModel::updateOrCreate(
+                        [
+                            'api_id' => $model['code'],
+                            'brand_id' => $brandId
+                        ],
+                        [
+                            'name' => $model['name']
+                        ]
+                    );
+                }
+                return true;
+            }
+        } catch (\Exception $e) {
+            Log::error("Erro na requisição GET /cars/brands/{$brandId}/models", [
+                'message' => $e->getMessage()
+            ]);
+        }
+        return false;
+    }
+
     public function fetchAndStoreBrands()
     {
         try {
             $response = $this->client->get("{$this->baseUrl}/cars/brands", [
-                'headers' => $this->headers
+                'headers' => $this->headers,
+                'verify' => false
             ]);
 
             $statusCode = $response->getStatusCode();
@@ -34,13 +74,14 @@ class CarsApiService
 
             Log::info('Requisição GET /cars/brands', [
                 'status' => $statusCode,
-                'response' => $body
+                'response' => $body,
+                'verify' => false
             ]);
 
             if ($statusCode === 200) {
                 foreach ($body as $brand) {
                     Brand::updateOrCreate(
-                        ['id' => $brand['code']], // ID único
+                        ['api_id' => $brand['code']],
                         ['name' => $brand['name']]
                     );
                 }

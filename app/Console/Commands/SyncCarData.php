@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\CarsApiService;
+use App\Models\Brand; 
 
 class SyncCarData extends Command
 {
@@ -22,6 +24,13 @@ class SyncCarData extends Command
         $this->info('Sincronizando marcas...');
         if ($this->carsApiService->fetchAndStoreBrands()) {
             $this->info('Marcas sincronizadas com sucesso.');
+
+
+            $brands = Brand::all();
+            foreach ($brands as $brand) {
+                $this->info("Sincronizando modelos para a marca {$brand->name}...");
+                $this->carsApiService->fetchAndStoreModelsForBrand($brand->api_id);
+            }
         } else {
             $this->error('Erro ao sincronizar marcas.');
         }

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use iluminate\Database\Eloquent\Model;
+use illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Brand extends Model
+class CarModel extends Model
 {
     protected $fiilable = ['brand_id','api_id', 'name'];
     protected $table = 'models';
