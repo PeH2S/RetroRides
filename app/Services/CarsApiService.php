@@ -40,17 +40,18 @@ class CarsApiService
             ]);
 
             if ($statusCode === 200) {
-                foreach ($body as $model) {
+                $models = $body['models'] ?? $body;
+
+                foreach ($models as $model) {
                     CarModel::updateOrCreate(
+                        ['api_id' => $model['code']],
                         [
-                            'api_id' => $model['code'],
-                            'brand_id' => $brandId
-                        ],
-                        [
-                            'name' => $model['name']
+                            'brand_id' => $brandId,
+                            'name' => $model['name'],
                         ]
                     );
                 }
+
                 return true;
             }
         } catch (\Exception $e) {
@@ -84,6 +85,9 @@ class CarsApiService
                         ['api_id' => $brand['code']],
                         ['name' => $brand['name']]
                     );
+
+                    $this->fetchAndStoreModelsForBrand($brand['code']);
+
                 }
                 return true;
             }
