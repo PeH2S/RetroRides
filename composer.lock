@@ -3483,7 +3483,6 @@
             },
             "require": {
                 "php": ">=8.2"
-                "php": ">=8.2"
             },
             "type": "library",
             "autoload": {
@@ -3716,7 +3715,6 @@
                 "symfony/expression-language": "^6.4|^7.0",
                 "symfony/http-foundation": "^6.4|^7.0",
                 "symfony/service-contracts": "^2.5|^3",
-                "symfony/stopwatch": "^6.4|^7.0"
                 "symfony/stopwatch": "^6.4|^7.0"
             },
             "type": "library",
@@ -8331,10 +8329,8 @@
             },
             "conflict": {
                 "symfony/console": "<6.4"
-                "symfony/console": "<6.4"
             },
             "require-dev": {
-                "symfony/console": "^6.4|^7.0"
                 "symfony/console": "^6.4|^7.0"
             },
             "bin": [
@@ -8444,6 +8440,5 @@
         "php": "^8.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
     "plugin-api-version": "2.6.0"
 }
