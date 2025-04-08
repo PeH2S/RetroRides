@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('CarModels', function (Blueprint $table) {
+        Schema::create('car_models', function (Blueprint $table) {
             $table->id();
             $table->foreignId('brand_id')->constrained();
             $table->string('api_id');
             $table->string('name');
             $table->timestamps();
+
+            $table->unique(['brand_id', 'api_id']);
         });
     }
 
