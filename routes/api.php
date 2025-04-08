@@ -22,3 +22,11 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 
+
+Route::get('/models/{brand}', function ($brandId) {
+    return CarModel::where('brand_id', $brandId)->get(['id', 'name']);
+});
+
+Route::get('/years/{model}', function ($modelId) {
+    return ModelYear::where('car_model_id', $modelId)->get(['id', 'year']);
+});

@@ -4,7 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ListingController;
+use App\Http\Controllers\SearchController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,3 +31,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
 });
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/anuncios/novo', [ListingController::class, 'create'])->name('listings.create');
+    Route::post('/anuncios', [ListingController::class, 'store'])->name('listings.store');
+});
+
+Route::get('/buscar', [SearchController::class, 'index'])->name('search.index');
