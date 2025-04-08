@@ -2,42 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function create()
+    /**
+     * Exibe o formulário de cadastro de usuários.
+     */
+    public function create(): View
     {
-        return view('users.create'); // Mostra o formulário
+        return view('users.create');
     }
 
-    public function store(Request $request)
+    /**
+     * Armazena um novo usuário no banco de dados.
+     */
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        // Validação dos dados
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'phone' => 'required|string|max:20',
-            'cpf_cnpj' => 'required|string|unique:users|regex:/^\d{11,14}$/', // Apenas números, entre 11 e 14 dígitos
-            'address' => 'required|string|max:500',
-            'password' => 'required|string|min:8|confirmed', // Validação da senha
-        ]);
-        // Remove caracteres não numéricos do CPF/CNPJ antes de salvar
-        $cpf_cnpj = preg_replace('/\D/', '', $request->cpf_cnpj);
+        $validatedData = $request->validated();
 
+        // Limpa CPF/CNPJ, mantendo apenas números
+        $cleanedCpfCnpj = preg_replace('/\D/', '', $validatedData['cpf_cnpj']);
+
+        // Cria o usuário com os dados validados
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'cpf_cnpj' => $cpf_cnpj, // Apenas números
-            'address' => $request->address,
-            'password' => bcrypt($request->password), // Criptografando a senha
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'],
+            'cpf_cnpj' => $cleanedCpfCnpj,
+            'address' => $validatedData['address'],
+            'password' => Hash::make($validatedData['password']),
         ]);
 
-        // Salvar usuário no banco
-        User::create($request->all());
-
-        // Redireciona com mensagem de sucesso
-        return redirect()->route('users.create')->with('success', 'Usuário cadastrado com sucesso!');
+        // Redireciona para o formulário com mensagem de sucesso
+        return redirect()
+            ->route('users.create')
+            ->with('success', 'Usuário cadastrado com sucesso!');
     }
 }

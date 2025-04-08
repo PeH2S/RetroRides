@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class CarController extends Controller
+class HomeController extends Controller
 {
     public function homePage(){
         return view('home');
