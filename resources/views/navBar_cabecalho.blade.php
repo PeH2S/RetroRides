@@ -2,7 +2,7 @@
     <div class="container" id="cabecalho">
         <div class="logo-container">
             <a class="navbar-brand" href="{{ route('inicio') }}">
-                <img src="{{ url('logo.png') }}" alt="Logo" class="logo-img">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-img">
             </a>
         </div>
 

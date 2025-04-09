@@ -1,24 +1,16 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// API de autenticação
+Route::prefix('auth')->group(function () {
+    Route::post('/registrar', [AuthController::class, 'register'])->name('auth.registrar');
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api')->name('auth.logout');
+    Route::get('/perfil', [AuthController::class, 'profile'])->middleware('auth:api')->name('auth.perfil');
 });
-Route::middleware('auth:api')->get('/profile', [AuthController::class, 'profile']);
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
 
+// API de criação de usuários (se for separada do AuthController)
+Route::post('/usuarios/cadastro', [UserController::class, 'store'])->name('users.store');
