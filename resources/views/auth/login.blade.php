@@ -8,7 +8,7 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
@@ -48,7 +48,7 @@
 
                             <!-- Link para cadastro -->
                             <div class="text-center mt-3">
-                                <a href="{{ route('users.create') }}" class="text-decoration-none">
+                                <a href="{{ route('users.index') }}" class="text-decoration-none">
                                     Não tenho cadastro
                                 </a>
                             </div>
@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <script>
+    <!--<script>
         const form = document.getElementById('login-form');
         const alertBox = document.getElementById('login-alert');
 
@@ -71,13 +71,20 @@
             const email = form.email.value;
             const password = form.password.value;
 
+            // Validação de campos no frontend
+            if (!email || !password) {
+                alertBox.className = 'alert alert-warning';
+                alertBox.innerText = 'Por favor, preencha todos os campos.';
+                alertBox.classList.remove('d-none');
+                return;
+            }
+
             try {
-                const response = await fetch("{{ route('auth.login') }}", {
+                const response = await fetch("/api/auth/login", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
                         email,
@@ -92,24 +99,24 @@
                     alertBox.innerText = 'Login realizado com sucesso!';
                     alertBox.classList.remove('d-none');
 
+                    // Armazenando o token no localStorage
                     localStorage.setItem('jwt_token', data.token);
 
+                    // Redirecionando após o login
                     setTimeout(() => {
                         window.location.href = "{{ route('inicio') }}";
                     }, 1500);
                 } else {
-                    alertBox.className = 'alert alert-danger';
-                    alertBox.innerText = data.error || 'Erro no login. Verifique as credenciais.';
-                    alertBox.classList.remove('d-none');
+                    throw new Error(data.error || 'Erro no login. Verifique as credenciais.');
                 }
 
             } catch (error) {
                 alertBox.className = 'alert alert-danger';
-                alertBox.innerText = 'Erro na requisição.';
+                alertBox.innerText = error.message || 'Erro desconhecido.';
                 alertBox.classList.remove('d-none');
             }
         });
-    </script>
+    </script> -->
 </body>
 
 </html>

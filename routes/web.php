@@ -2,23 +2,38 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ListingController;
-use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+
+Route::get('/usuarios/cadastro', [UserController::class, 'create'])->name('users.create');
+Route::post('/usuarios', [UserController::class, 'store'])->name('users.store');
+
+// Página de exibição dos usuários cadastrados
+Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
+
+// Editar um usuário
+Route::get('/usuarios/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+
+Route::put('/usuarios/{id}', [UserController::class, 'update'])->name('users.update');  
+
+// Ver detalhes de um usuário
+Route::get('/usuarios/{id}', [UserController::class, 'show'])->name('users.show');
+
+// Excluir um usuário
+Route::delete('/usuarios/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 // Página inicial
 Route::get('/inicio', [HomeController::class, 'homePage'])->name('inicio');
 
-// Página de login (exibe a view)
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
 
-// Página de cadastro (exibe o formulário de cadastro de usuário)
-Route::get('/usuarios/cadastro', [UserController::class, 'create'])->name('users.create');
 
-// Rotas de anúncios SEM autenticação (removi o middleware)
-Route::resource('listings', ListingController::class);
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/anuncios/novo', [ListingController::class, 'create'])->name('listings.create');
+    Route::post('/anuncios', [ListingController::class, 'store'])->name('listings.store');
+});
 
 Route::get('/buscar', [SearchController::class, 'index'])->name('search.index');
+

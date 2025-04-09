@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Helpers\DocumentValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -54,30 +56,48 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        // Validação das credenciais
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:8',
         ]);
 
-        if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Credenciais inválidas'], 401);
+        // Log para verificar as credenciais recebidas
+        Log::info('Tentando autenticar usuário', ['email' => $credentials['email']]);
+
+        try {
+            // Tentativa de autenticação com JWT
+            if (!$token = JWTAuth::attempt($credentials)) {
+                Log::error('Credenciais inválidas', ['credentials' => $credentials]);
+                return response()->json([
+                    'error' => 'Credenciais inválidas',
+                ], 401);
+            }
+
+            // Obtenção do usuário autenticado
+            $user = auth()->user();
+            Log::info('Usuário autenticado', ['user' => $user]);
+
+            // Retorno do sucesso com o token e dados do usuário
+            return response()->json([
+                'message' => 'Login realizado com sucesso!',
+                'token' => $token,
+                'user' => $user,
+            ]);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            // Erro ao gerar o token JWT
+            Log::error('JWTException: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Erro ao gerar token',
+            ], 500);
+        } catch (\Exception $e) {
+            // Erro desconhecido
+            Log::error('Exception: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Erro desconhecido ao tentar autenticar',
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Login realizado com sucesso!',
-            'token' => $token,
-            'user' => auth()->user()
-        ]);
     }
-
-    /**
-     * Exibir o formulário de login (caso esteja usando Blade)
-     */
-    public function showLoginForm()
-    {
-        return view('login');
-    }
-
     /**
      * Realizar logout e invalidar o token
      */
@@ -87,10 +107,11 @@ class AuthController extends Controller
             JWTAuth::invalidate(JWTAuth::getToken());
 
             return response()->json(['message' => 'Logout realizado com sucesso']);
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+        } catch (JWTException $e) {
             return response()->json(['error' => 'Não foi possível fazer o logout'], 500);
         }
     }
+
 
     /**
      * Exibir o perfil do usuário autenticado
@@ -98,5 +119,13 @@ class AuthController extends Controller
     public function profile()
     {
         return response()->json(auth()->user());
+    }
+
+    /**
+     * Exibir o formulário de login (caso esteja usando Blade)
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login'); // Isso vai buscar resources/views/auth/login.blade.php
     }
 }

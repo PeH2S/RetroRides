@@ -12,6 +12,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
+
     <!-- Estilos customizados -->
     <link rel="stylesheet" href="{{ asset('css/stylesCreate.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesNavBar.css') }}">
@@ -29,7 +30,7 @@
 
     <!-- Listagem de Veículos -->
     <div class="container">
-        @yield('create')
+        @yield('content')
     </div>
 
     <!-- Rodapé -->

@@ -41,6 +41,41 @@
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    @auth
+    <script>
+        (async () => {
+            const token = localStorage.getItem('jwt_token');
+
+            if (!token) {
+                window.location.href = "{{ route('login.form') }}";
+                return;
+            }
+
+            try {
+                const response = await fetch("{{ route('auth.perfil') }}", {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token inválido');
+                }
+
+                const user = await response.json();
+                console.log('Usuário logado:', user.name);
+
+            } catch (error) {
+                console.error(error);
+                localStorage.removeItem('jwt_token');
+                window.location.href = "{{ route('login.form') }}";
+            }
+        })();
+    </script>
+    @endauth
 </body>
 
 </html>
