@@ -52,8 +52,6 @@
       0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
     ),
   ),
-<<<<<<< HEAD
-=======
   'tymon/jwt-auth' => 
   array (
     'aliases' => 
@@ -66,5 +64,4 @@
       0 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
     ),
   ),
->>>>>>> F_B01
 );
