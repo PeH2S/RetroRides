@@ -21,16 +21,7 @@ Route::get('/home', [CarController::class, 'homePage']);
 
 Route::get('/usuarios/cadastro', [UserController::class, 'create'])->name('users.create');
 Route::post('/usuarios/cadastro', [UserController::class, 'store'])->name('users.store');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::middleware('auth:api')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/profile', [AuthController::class, 'profile']);
-});
 
 
 Route::middleware(['auth'])->group(function () {
