@@ -9,11 +9,11 @@ $(document).ready(function() {
     // Função para alternar entre PF e PJ
     function toggleUserType() {
         const isPJ = $('#toggleType').is(':checked');
-        
+
         // Atualiza visual dos labels
         $('#pfLabel').toggleClass('active', !isPJ);
         $('#pjLabel').toggleClass('active', isPJ);
-        
+
         // Alterna visibilidade dos campos
         $('#pfFields').toggleClass('hidden', isPJ);
         $('#pjFields').toggleClass('hidden', !isPJ);

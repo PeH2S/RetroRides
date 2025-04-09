@@ -179,23 +179,21 @@
 
             if (this.checkValidity() === false) {
                 e.stopPropagation();
-            } else {
-                // Envio do formulário via AJAX
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        window.location.href = createUrl;
-                    },
-                    error: function(xhr) {
-                        alert(xhr.responseJSON.message || 'Erro ao cadastrar');
-                    }
-                });
+                this.classList.add('was-validated');
+                return false;
             }
 
-            this.classList.add('was-validated');
-            return false;
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    window.location.href = "{{ route('users.create') }}";
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.message || 'Erro ao cadastrar');
+                }
+            });
         });
     });
 </script>

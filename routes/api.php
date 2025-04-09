@@ -14,8 +14,8 @@ Route::prefix('auth')->group(function () {
 
 
 // API de criação de usuários (se for separada do AuthController)
+Route::get('/usuarios/cadastro', [UserController::class, 'create'])->name('users.create');
 Route::post('/usuarios/cadastro', [UserController::class, 'store'])->name('users.store');
-
 
 Route::get('/models/{brand}', function ($brandId) {
     return CarModel::where('brand_id', $brandId)->get(['id', 'name']);
@@ -24,4 +24,3 @@ Route::get('/models/{brand}', function ($brandId) {
 Route::get('/years/{model}', function ($modelId) {
     return ModelYear::where('car_model_id', $modelId)->get(['id', 'year']);
 });
-

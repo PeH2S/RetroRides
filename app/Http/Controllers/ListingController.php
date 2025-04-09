@@ -2,102 +2,119 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Listing;
+use App\Models\CarModel;
+use App\Models\ModelYear;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ListingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $listings = \App\Models\Listing::latest()->paginate(10);
+        return view('listings.index', compact('listings'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
+
     public function create()
     {
-        $brands = Brand::with('carModels')->get();
+        $brands = Brand::with(['carModels.modelYears'])->orderBy('name')->get();
         return view('listings.create', compact('brands'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'model_year_id' => 'required|exists:model_years,id',
-            'price' => 'required|numeric|min:1000',
-            'description' => 'required|string|min:20|max:2000',
-            'location' => 'required|string|max:255',
-            'mileage' => 'nullable|integer|min:0',
-            'color' => 'nullable|string|max:50',
-            'photos' => 'required|array|min:1|max:10',
-            'photos.*' => 'image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+        $data = $request->all();
 
-        try {
-            $listing = Listing::create([
-                'user_id' => Auth::id(),
-                'model_year_id' => $validated['model_year_id'],
-                'price' => $validated['price'],
-                'description' => $validated['description'],
-                'location' => $validated['location'],
-                'mileage' => $validated['mileage'],
-                'color' => $validated['color']
-            ]);
+        $data['user_id'] = 1;
 
-            foreach ($request->file('photos') as $key => $photo) {
-                $path = $photo->store('listings/' . $listing->id, 'public');
+        $listing = Listing::create($data);
 
-                ListingPhoto::create([
-                    'listing_id' => $listing->id,
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $key => $image) {
+                $path = $image->store('listings', 'public');
+                $isMain = $key === 0;
+
+                $listing->photos()->create([
                     'path' => $path,
-                    'is_main' => $key === 0
+                    'is_main' => $isMain
                 ]);
             }
-
-            return redirect()->route('listings.show', $listing)
-                ->with('success', 'Anúncio publicado com sucesso!');
-        } catch (\Exception $e) {
-            return back()->withInput()
-                ->with('error', 'Erro ao publicar anúncio: ' . $e->getMessage());
         }
+
+        return redirect()->route('listings.index')->with('success', 'Anúncio criado com sucesso!');
     }
 
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+
+    public function edit(Listing $listing)
     {
-        //
+        $brands = Brand::with('carModels.modelYears')->orderBy('name')->get();
+
+        return view('listings.edit', compact('listing', 'brands'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+
+    public function update(Request $request, Listing $listing)
     {
-        //
+
+
+        $validated = $request->validate([
+            'brand_id' => 'required|exists:brands,id',
+            'model_id' => 'required|exists:car_models,id',
+            'model_year_id' => 'required|exists:model_years,id',
+            'price' => 'required|numeric|min:0',
+            'description' => 'required|string|min:10',
+            'location' => 'required|string',
+            'mileage' => 'required|numeric|min:0',
+            'color' => 'required|string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $listing->update($validated);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('listings', 'public');
+
+                $listing->photos()->create([
+                    'path' => $path,
+                    'is_main' => false
+                ]);
+            }
+        }
+
+        return redirect()->route('listings.index')->with('success', 'Anúncio atualizado com sucesso!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Listing $listing)
     {
-        //
+
+
+        // Remove as imagens do storage
+        foreach ($listing->photos as $photo) {
+            Storage::disk('public')->delete($photo->path);
+        }
+
+        $listing->delete();
+
+        return redirect()->route('listings.index')->with('success', 'Anúncio removido com sucesso!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function getModels($brandId)
     {
-        //
+        $models = CarModel::where('brand_id', $brandId)->orderBy('name')->get();
+        return response()->json($models);
+    }
+
+    public function getYears($modelId)
+    {
+        $years = ModelYear::where('car_model_id', $modelId)->orderBy('year')->get();
+        return response()->json($years);
     }
 }
