@@ -1,8 +1,18 @@
 @extends('static.layoutHome')
 
 @section('main')
+<!-- Banners -->
+<nav>
+    @include('static.banner')
+</nav>
 
-<div class="row">
+<!-- Barra de Busca -->
+<div class="container mt-5">
+    @include('static.searchBar')
+</div>
+
+
+<div class="row" >
     <div class="col-md-4 mb-4">
         <div class="card">
             <img src="{{ url('images/OIP.jpg') }}" class="card-img-top" alt="Carro Vintage">

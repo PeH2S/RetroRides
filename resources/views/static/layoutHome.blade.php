@@ -28,17 +28,9 @@
         </div>
     </nav>
 
-    <!-- Banners -->
-    <nav>
-        @include('static.banner')
-    </nav>
 
-    <!-- Barra de Busca -->
-    <div class="container mt-5">
-        @include('static.searchBar')
-    </div>
 
-    <!-- Listagem de Veículos -->
+
     <div class="container mt-5">
         @yield('main')
     </div>
