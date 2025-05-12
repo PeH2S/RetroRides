@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\CarApiService;
@@ -21,10 +21,21 @@ class CarDataController extends Controller
         return response()->json($brands);
     }
 
-    public function getModels($brandId)
+    public function getModels(Request $request, $brandId)
     {
-        $models = $this->carApiService->getModels($brandId);
-        return response()->json($models);
+        $vehicleType = $request->query('tipo');
+
+        if (!$brandId || $brandId === 'undefined') {
+            return response()->json(['error' => 'Brand ID é obrigatório'], 400);
+        }
+
+        $models = $this->carApiService->getModels($brandId, $vehicleType);
+
+        $filteredModels = array_filter($models, function ($model) {
+            return !empty($model['code']) && !empty($model['name']);
+        });
+
+        return response()->json(array_values($filteredModels));
     }
 
     public function getYears($brandId, $modelId)

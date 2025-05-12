@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CarDataController;
+use App\Http\Controllers\CarDataController;
 
 Route::get('/marcas', [CarDataController::class, 'getBrands']);
 Route::get('/modelos/{brandId}', [CarDataController::class, 'getModels']);

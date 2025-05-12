@@ -6,46 +6,67 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
+
 class CarApiService
 {
     protected $baseUrl;
-    protected $cacheTime;
+    protected $cacheHours;
     protected $headers;
     protected $client;
 
-    public function __construct()
+    const DEFAULT_VEHICLE_TYPE = 'cars';
+    const CACHE_PREFIX = 'fipe_';
+    const CACHE_HOURS = 24;
+
+    const VEHICLE_TYPES = [
+        'carro' => 'cars',
+        'moto' => 'motorcycles'
+    ];
+
+    public function __construct(Client $client = null)
     {
-        $this->client = new Client();
-        $this->baseUrl = 'https://parallelum.com.br/fipe/api/v2'; // URL corrigida da API FIPE
-        $this->cacheTime = now()->addHours(24); // Cache de 24 horas
+        $this->client = $client ?? new Client();
+        $this->baseUrl = 'https://parallelum.com.br/fipe/api/v2';
+        $this->cacheHours = self::CACHE_HOURS;
         $this->headers = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
         ];
-    }
 
-    public function getBrands($vehicleType = 'cars')
-    {
-        try {
-            return Cache::remember("fipe_brands_{$vehicleType}", $this->cacheTime, function () use ($vehicleType) {
-                $response = $this->client->get("{$this->baseUrl}/{$vehicleType}/brands", [
-                    'headers' => $this->headers,
-                    'verify' => false
-                ]);
-
-                if ($response->getStatusCode() === 200) {
-                    return json_decode($response->getBody()->getContents(), true);
-                }
-                return [];
-            });
-        } catch (\Exception $e) {
-            Log::error('Erro ao buscar marcas', [
-                'message' => $e->getMessage(),
-                'vehicleType' => $vehicleType
-            ]);
-            return [];
+        if ($token = env('FIPE_API_TOKEN')) {
+            $this->headers['X-Subscription-Token'] = $token;
         }
     }
+
+    protected function getVehicleType($typeFromRequest)
+    {
+        return self::VEHICLE_TYPES[strtolower($typeFromRequest)] ?? self::DEFAULT_VEHICLE_TYPE;
+    }
+
+    public function getBrands($vehicleType = null)
+    {
+        $vehicleType = $this->getVehicleType($vehicleType);
+        $cacheKey = self::CACHE_PREFIX . "brands_{$vehicleType}";
+
+        return Cache::remember($cacheKey, now()->addHours($this->cacheHours), function () use ($vehicleType) {
+            try {
+                $response = $this->client->get("{$this->baseUrl}/{$vehicleType}/brands", [
+                    'headers' => $this->headers
+                ]);
+
+                return $response->getStatusCode() === 200
+                    ? json_decode($response->getBody()->getContents(), true)
+                    : [];
+            } catch (\Exception $e) {
+                Log::error('Erro ao buscar marcas', [
+                    'message' => $e->getMessage(),
+                    'vehicleType' => $vehicleType
+                ]);
+                return [];
+            }
+        });
+    }
+
 
     public function getModels($brandId, $vehicleType = 'cars')
     {
@@ -57,7 +78,14 @@ class CarApiService
                 ]);
 
                 if ($response->getStatusCode() === 200) {
-                    return json_decode($response->getBody()->getContents(), true);
+                    $data = json_decode($response->getBody()->getContents(), true);
+
+                    return array_map(function ($item) {
+                        return [
+                            'code' => $item['code'] ?? $item['codigo'] ?? null,
+                            'name' => $item['name'] ?? $item['nome'] ?? null
+                        ];
+                    }, $data);
                 }
                 return [];
             });

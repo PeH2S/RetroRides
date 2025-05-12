@@ -1,4 +1,3 @@
-// public/js/ad/adCreate.js
 document.addEventListener("DOMContentLoaded", () => {
     const marcaSelect = document.getElementById("marca");
     const modeloSelect = document.getElementById("modelo");
@@ -6,99 +5,118 @@ document.addEventListener("DOMContentLoaded", () => {
     const anoFabricacaoSelect = document.getElementById("ano_fabricacao");
     const versaoSelect = document.getElementById("versao");
 
-    // Carrega marcas
-    fetch('/api/marcas')
+    const pathSegments = window.location.pathname.split('/').filter(segment => segment.trim() !== '');
+    const vehicleType = pathSegments[pathSegments.length - 1];
+    console.log("Tipo de veículo detectado:", vehicleType);
+
+    const validTypes = ['carro', 'moto', 'caminhao'];
+    if (!validTypes.includes(vehicleType)) {
+        console.error('Tipo de veículo inválido na URL:', vehicleType);
+        return;
+    }
+
+    const fillSelect = (selectElement, data, defaultValue = 'Selecione') => {
+        selectElement.innerHTML = `<option disabled selected>${defaultValue}</option>`;
+
+        if (!Array.isArray(data)) {
+            console.error('Dados recebidos não são um array:', data);
+            selectElement.innerHTML = '<option disabled selected>Erro nos dados</option>';
+            return;
+        }
+
+        data.forEach(item => {
+            if (item && item.code && item.name) {
+                selectElement.innerHTML += `<option value="${item.code}">${item.name}</option>`;
+            } else {
+                console.warn('Item inválido ignorado:', item);
+            }
+        });
+    };
+
+    fetch(`/api/marcas?tipo=${vehicleType}`)
         .then(res => {
-            if (!res.ok) throw new Error('Erro ao carregar marcas');
+            if (!res.ok) throw new Error(`Erro ${res.status} ao carregar marcas`);
             return res.json();
         })
         .then(data => {
-            marcaSelect.innerHTML = '<option disabled selected>Selecione</option>';
-            data.forEach(marca => {
-                marcaSelect.innerHTML += `<option value="${marca.codigo}">${marca.nome}</option>`;
-            });
+            console.log('Marcas recebidas:', data);
+            fillSelect(marcaSelect, data);
         })
         .catch(error => {
-            console.error('Erro:', error);
+            console.error('Erro ao carregar marcas:', error);
             marcaSelect.innerHTML = '<option disabled selected>Erro ao carregar</option>';
         });
 
-    // Quando selecionar marca -> carrega modelos
     marcaSelect.addEventListener("change", () => {
         const marcaId = marcaSelect.value;
-        modeloSelect.disabled = false;
-        modeloSelect.innerHTML = '<option disabled selected>Carregando...</option>';
+        if (!marcaId || marcaId === 'undefined') return;
 
-        fetch(`/api/modelos/${marcaId}`)
+        modeloSelect.disabled = false;
+        fillSelect(modeloSelect, [], 'Carregando...');
+
+        fetch(`/api/modelos/${marcaId}?tipo=${vehicleType}`)
             .then(res => {
-                if (!res.ok) throw new Error('Erro ao carregar modelos');
+                if (!res.ok) throw new Error(`Erro ${res.status} ao carregar modelos`);
                 return res.json();
             })
             .then(data => {
-                modeloSelect.innerHTML = '<option disabled selected>Selecione</option>';
-                data.forEach(modelo => {
-                    modeloSelect.innerHTML += `<option value="${modelo.codigo}">${modelo.nome}</option>`;
-                });
+                console.log('Modelos recebidos:', data);
+                fillSelect(modeloSelect, data);
             })
             .catch(error => {
-                console.error('Erro:', error);
-                modeloSelect.innerHTML = '<option disabled selected>Erro ao carregar</option>';
+                console.error('Erro ao carregar modelos:', error);
+                fillSelect(modeloSelect, [], 'Erro ao carregar');
             });
     });
 
-    // Quando selecionar modelo -> carrega anos
     modeloSelect.addEventListener("change", () => {
         const marcaId = marcaSelect.value;
         const modeloId = modeloSelect.value;
+        if (!marcaId || !modeloId || modeloId === 'undefined') return;
+
         anoModeloSelect.disabled = false;
         anoFabricacaoSelect.disabled = false;
-        anoModeloSelect.innerHTML = '<option disabled selected>Carregando...</option>';
-        anoFabricacaoSelect.innerHTML = '<option disabled selected>Carregando...</option>';
+        fillSelect(anoModeloSelect, [], 'Carregando...');
+        fillSelect(anoFabricacaoSelect, [], 'Carregando...');
 
-        fetch(`/api/anos/${marcaId}/${modeloId}`)
+        fetch(`/api/anos/${marcaId}/${modeloId}?tipo=${vehicleType}`)
             .then(res => {
-                if (!res.ok) throw new Error('Erro ao carregar anos');
+                if (!res.ok) throw new Error(`Erro ${res.status} ao carregar anos`);
                 return res.json();
             })
             .then(data => {
-                anoModeloSelect.innerHTML = '<option disabled selected>Selecione</option>';
-                anoFabricacaoSelect.innerHTML = '<option disabled selected>Selecione</option>';
-
-                // Supondo que a API retorne anos de modelo e fabricação juntos
-                data.forEach(ano => {
-                    anoModeloSelect.innerHTML += `<option value="${ano.codigo}">${ano.nome}</option>`;
-                    anoFabricacaoSelect.innerHTML += `<option value="${ano.codigo}">${ano.nome}</option>`;
-                });
+                console.log('Anos recebidos:', data);
+                fillSelect(anoModeloSelect, data);
+                fillSelect(anoFabricacaoSelect, data);
             })
             .catch(error => {
-                console.error('Erro:', error);
-                anoModeloSelect.innerHTML = '<option disabled selected>Erro ao carregar</option>';
-                anoFabricacaoSelect.innerHTML = '<option disabled selected>Erro ao carregar</option>';
+                console.error('Erro ao carregar anos:', error);
+                fillSelect(anoModeloSelect, [], 'Erro ao carregar');
+                fillSelect(anoFabricacaoSelect, [], 'Erro ao carregar');
             });
     });
 
-    // Quando selecionar ano -> carrega versões
     anoModeloSelect.addEventListener("change", () => {
         const marcaId = marcaSelect.value;
         const modeloId = modeloSelect.value;
         const anoId = anoModeloSelect.value;
-        versaoSelect.disabled = false;
-        versaoSelect.innerHTML = '<option disabled selected>Carregando...</option>';
+        if (!marcaId || !modeloId || !anoId || anoId === 'undefined') return;
 
-        fetch(`/api/versoes/${marcaId}/${modeloId}/${anoId}`)
+        versaoSelect.disabled = false;
+        fillSelect(versaoSelect, [], 'Carregando...');
+
+        fetch(`/api/versoes/${marcaId}/${modeloId}/${anoId}?tipo=${vehicleType}`)
             .then(res => {
-                if (!res.ok) throw new Error('Erro ao carregar versões');
+                if (!res.ok) throw new Error(`Erro ${res.status} ao carregar versões`);
                 return res.json();
             })
             .then(data => {
-                versaoSelect.innerHTML = '<option disabled selected>Selecione</option>';
-                data.forEach(versao => {
-                    versaoSelect.innerHTML += `<option value="${versao.codigo}">${versao.nome}</option>`;
-                });
+                console.log('Versões recebidas:', data);
+                fillSelect(versaoSelect, data);
             })
             .catch(error => {
-                console.error('Erro:', error);
-                versaoSelect.innerHTML = '<option disabled selected>Erro ao carregar</option>';
+                console.error('Erro ao carregar versões:', error);
+                fillSelect(versaoSelect, [], 'Erro ao carregar');
             });
     });
 });
