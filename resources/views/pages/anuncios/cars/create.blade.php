@@ -54,13 +54,6 @@
                     </div>
 
                     <div class="col-12">
-                        <label for="versao" class="form-label">Versão*</label>
-                        <select class="form-select" id="versao" name="versao" required disabled>
-                            <option selected disabled>Selecione o modelo</option>
-                        </select>
-                    </div>
-
-                    <div class="col-12">
                         <label for="cor" class="form-label">Cor*</label>
                         <select class="form-select" id="cor" name="cor" required>
                             <option selected disabled>Selecione</option>

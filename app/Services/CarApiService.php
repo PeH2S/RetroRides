@@ -13,6 +13,8 @@ class CarApiService
     protected $cacheHours;
     protected $headers;
     protected $client;
+    protected $cacheTime;
+
 
     const DEFAULT_VEHICLE_TYPE = 'cars';
     const CACHE_PREFIX = 'fipe_';
@@ -26,8 +28,9 @@ class CarApiService
     public function __construct(Client $client = null)
     {
         $this->client = $client ?? new Client();
-        $this->baseUrl = 'https://parallelum.com.br/fipe/api/v2';
+        $this->baseUrl = 'https://fipe.parallelum.com.br/api/v2';
         $this->cacheHours = self::CACHE_HOURS;
+        $this->cacheTime = now()->addHours($this->cacheHours);
         $this->headers = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -51,7 +54,8 @@ class CarApiService
         return Cache::remember($cacheKey, now()->addHours($this->cacheHours), function () use ($vehicleType) {
             try {
                 $response = $this->client->get("{$this->baseUrl}/{$vehicleType}/brands", [
-                    'headers' => $this->headers
+                    'headers' => $this->headers,
+                    'verify' => false
                 ]);
 
                 return $response->getStatusCode() === 200
@@ -68,8 +72,9 @@ class CarApiService
     }
 
 
-    public function getModels($brandId, $vehicleType = 'cars')
+    public function getModels($brandId, $vehicleType = null)
     {
+        $vehicleType = $this->getVehicleType($vehicleType);
         try {
             return Cache::remember("fipe_models_{$vehicleType}_{$brandId}", $this->cacheTime, function () use ($brandId, $vehicleType) {
                 $response = $this->client->get("{$this->baseUrl}/{$vehicleType}/brands/{$brandId}/models", [
