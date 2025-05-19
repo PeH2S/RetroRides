@@ -1,18 +1,66 @@
 @extends('static.layoutHome')
 @section('main')
-<div class="container mt-4">
+<div class="container my-5">
     @include('pages.anuncios.partials.steps', ['step' => 3])
 
-    <form action="{{ route('anuncios.step3') }}" method="POST">
+    <h2 class="text-center fw-bold mb-3">Informe as condições do veículo</h2>
+    <p class="text-center text-muted mb-4">
+        Selecione os itens que representam o estado atual do seu veículo.
+    </p>
+
+    <form action="{{ route('anuncio.step3') }}" method="POST">
         @csrf
-        <p>Selecione as condições:</p>
-        @foreach(['Único Dono', 'IPVA Pago', 'Licenciado', 'Veículo de Colecionador'] as $cond)
-        <div class="form-check">
-            <input type="checkbox" name="condicoes[]" value="{{ $cond }}" class="form-check-input" id="cond-{{ $loop->index }}">
-            <label class="form-check-label" for="cond-{{ $loop->index }}">{{ $cond }}</label>
+
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
+            @foreach(['Único Dono', 'IPVA Pago', 'Licenciado', 'Veículo de Colecionador'] as $index => $cond)
+                <label class="btn btn-outline-success rounded-pill px-4 py-2 condicao-btn" style="color: #004E64;" for="condicao{{ $index }}">
+                    <input type="checkbox" name="condicoes[]" value="{{ $cond }}" class="d-none condicao-checkbox" id="condicao{{ $index }}">
+                    {{ $cond }}
+                </label>
+            @endforeach
         </div>
-        @endforeach
-        <button type="submit" class="btn btn-primary float-end mt-3">Próximo &rarr;</button>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ route('anuncio.step2') }}" class="btn btn-link text-decoration-none">
+                &larr; <strong>Voltar</strong>
+            </a>
+            <button type="submit" class="btn btn-dark px-4 py-2">
+                Continuar &rarr;
+            </button>
+        </div>
     </form>
 </div>
+
+<style>
+    .btn-outline-success {
+        border-color: #004E64;
+        color: #004E64;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #e6f5ec;
+    }
+
+    .btn-outline-success.selected {
+        background-color: #004E64 !important;
+        color: white !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('.condicao-checkbox');
+        const labels = document.querySelectorAll('.condicao-btn');
+
+        labels.forEach((label, index) => {
+            label.addEventListener('click', (e) => {
+                e.preventDefault();
+                const checkbox = checkboxes[index];
+                checkbox.checked = !checkbox.checked;
+                label.classList.toggle('selected', checkbox.checked);
+            });
+        });
+    });
+</script>
 @endsection

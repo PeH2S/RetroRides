@@ -12,9 +12,9 @@
         @csrf
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
-            @foreach(['Único Dono', 'IPVA Pago', 'Não aceito troca', 'Veículo financiado', 'Licenciado', 'Garantia de Fábrica', 'Veículo de Colecionador', 'Todas as revisões em concessionária', 'Adaptado para pessoas com deficiência'] as $item)
-                <label class="btn btn-outline-secondary rounded-pill px-4 py-2">
-                    <input type="checkbox" name="condicoes[]" value="{{ $item }}" class="d-none" style="color: #004E64">
+            @foreach(['Único Dono', 'IPVA Pago', 'Não aceito troca', 'Veículo financiado', 'Licenciado', 'Garantia de Fábrica', 'Veículo de Colecionador', 'Todas as revisões em concessionária', 'Adaptado para pessoas com deficiência'] as $index => $item)
+                <label class="btn btn-outline-success rounded-pill px-4 py-2 condicao-btn" style="color: #004E64;" for="condicao{{ $index }}">
+                    <input type="checkbox" name="condicoes[]" value="{{ $item }}" class="d-none condicao-checkbox" id="condicao{{ $index }}">
                     {{ $item }}
                 </label>
             @endforeach
@@ -31,21 +31,36 @@
     </form>
 </div>
 
-{{-- Estilo opcional para destacar seleção de botões --}}
 <style>
-    .btn-outline-secondary input[type="checkbox"]:checked + span,
-    .btn-outline-secondary input[type="checkbox"]:checked {
-        background-color: #000;
-        color: #fff;
-        border-color: #000;
-    }
-
-    .btn-outline-secondary {
+    .btn-outline-success {
+        border-color: #004E64;
+        color: #004E64;
         transition: all 0.2s ease-in-out;
     }
 
-    .btn-outline-secondary:hover {
-        background-color: #f0f0f0;
+    .btn-outline-success:hover {
+        background-color: #e6f5ec;
+    }
+
+    .btn-outline-success.selected {
+        background-color: #004E64 !important;
+        color: white !important;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('.condicao-checkbox');
+        const labels = document.querySelectorAll('.condicao-btn');
+
+        labels.forEach((label, index) => {
+            label.addEventListener('click', (e) => {
+                e.preventDefault();
+                const checkbox = checkboxes[index];
+                checkbox.checked = !checkbox.checked;
+                label.classList.toggle('selected', checkbox.checked);
+            });
+        });
+    });
+</script>
 @endsection
