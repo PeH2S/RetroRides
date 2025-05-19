@@ -3,22 +3,16 @@
 @section('main')
 
 <div class="container mt-4">
-    <!-- Etapas -->
-    <div class="d-flex justify-content-around mb-3 mt-5 text-center">
-        <div>1. Preencha os dados do veículo</div>
-        <div>2. Destaque seu anúncio</div>
-        <div>3. Finalize seu anúncio</div>
-    </div>
-    <div class="progress mb-4" style="height: 5px;">
-        <div class="progress-bar" style="width: 33%; background-color:#004E64;"></div>
-    </div>
+    @include('pages.anuncios.partials.steps', ['step' => 1])
+
 
     <!-- Formulário Centralizado e Estreito -->
     <div class="d-flex justify-content-center">
         <div class="bg-white p-4 rounded shadow-sm w-100" style="max-width: 600px;">
             <h4 class="text-center mb-4">Preencha os dados do veículo</h4>
 
-            <form id="form-anuncio">
+            <form id="form-anuncio" action="{{ route('anuncio.step1') }}" method="POST">
+                @csrf
                 <div class="row g-3">
 
                     <!-- Dados via API -->
@@ -80,7 +74,7 @@
 
                     <!-- Ações -->
                     <div class="d-flex justify-content-between">
-                        <a href="#" class="btn btn-outline-secondary">&larr; Voltar</a>
+                        <a href="/anunciar" class="btn btn-outline-secondary">&larr; Voltar</a>
                         <button type="submit" class="btn btn-danger">Continuar &rarr;</button>
                     </div>
                 </div>
