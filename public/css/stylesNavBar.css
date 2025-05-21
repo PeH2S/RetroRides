@@ -15,7 +15,8 @@
     margin-right: 250px;
 }
 .logo-img {
-    height: 200px;
+
+    max-height: 100%;
     width: auto;
     transition: transform 0.3s;
 }
