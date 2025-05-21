@@ -17,8 +17,19 @@
                     <input type="number" class="form-control" id="quilometragem" name="quilometragem" required>
                     <span class="input-group-text">km</span>
                 </div>
-                <small class="text-muted">Aqui você pode falar um pouco mais sobre os diferenciais do seu carro. Mas não é obrigatório, tá?</small>
             </div>
+
+            <!-- Placa -->
+            <div class="mb-4">
+                <label for="placa" class="form-label fw-semibold">Placa do veículo*</label>
+                <input type="text" class="form-control form-control-lg text-uppercase text-center fs-4 border-2 border-dark" 
+                    id="placa" name="placa" maxlength="8" required 
+                    placeholder="EX: ABC1D23">
+                <small class="form-text text-muted d-block text-center mt-2">
+                    Digite a placa no formato correto (ex: ABC1D23).
+                </small>
+            </div>
+
 
             <!-- Número de Portas -->
             <div class="mb-4">
@@ -36,6 +47,8 @@
             <div class="mb-4">
                 <textarea class="form-control" id="descricao" name="descricao" rows="3" maxlength="500" placeholder="Escreva uma descrição opcional..."></textarea>
                 <div class="text-end text-muted small mt-1"><span id="char-count">0</span> / 500</div>
+                <small class="text-muted">Aqui você pode falar um pouco mais sobre os diferenciais do seu carro. Mas não é obrigatório, tá?</small>
+
             </div>
 
             <!-- Alerta de segurança -->
