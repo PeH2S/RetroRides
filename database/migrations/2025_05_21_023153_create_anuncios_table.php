@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('combustivel');
             $table->integer('portas');
             $table->string('placa')->nullable();
-            $table->string('final_placa')->nullable();
             $table->text('descricao')->nullable();
+            $table->text('detalhes')->nullable();
             $table->integer('quilometragem');
             $table->decimal('preco', 10, 2);
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
