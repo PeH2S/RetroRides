@@ -63,6 +63,10 @@ class AnuncioController extends Controller
     public function step2Post(Request $request)
     {
         session(['anuncio.step2' => $request->except('_token')]);
+        $request->validate([
+            'placa' => 'required|string|size:7|alpha_num',
+        ]);
+
         return redirect()->route('anuncio.step3');
     }
 
@@ -171,8 +175,8 @@ class AnuncioController extends Controller
             'quilometragem' => session('anuncio.step2.quilometragem'),
             'portas' => session('anuncio.step2.portas'),
             'placa' => session('anuncio.step2.placa'),
-            'final_placa' => session('anuncio.step2.final_placa'),
-            'descricao' => session('anuncio.step3.descricao'),
+            'descricao' => session('anuncio.step2.descricao'),
+            'detalhes' => session('anuncio.step3.condicoes'),
             'status' => 'ativo'
         ]);
 
