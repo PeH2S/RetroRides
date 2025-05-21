@@ -117,9 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(data => {
                 console.log("Detalhes do veículo:", data);
-                const combustivel = data.fuel || null;
+                const combustivel = data.fuel;
                 if (combustivel) {
                     document.getElementById("combustivel").value = combustivel;
+                    document.getElementById("combustivel_visivel").value = combustivel;
                 }
                 console.log(combustivel);
             })
@@ -131,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 document.getElementById("form-anuncio").addEventListener("submit", function (e) {
     const combustivel = document.getElementById("combustivel").value;
+
     if (!combustivel) {
         e.preventDefault();
         alert("Por favor, selecione o modelo e o ano do veículo para carregar o tipo de combustível.");

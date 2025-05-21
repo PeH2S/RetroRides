@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-12">
                         <label for="combustivel" class="form-label">Combustível*</label>
-                        <input type="text" class="form-control" id="combustivel_visivel" disabled>
+                        <input type="text" class="form-control" id="combustivel_visivel" readonly >
                         <input type="hidden" name="combustivel" id="combustivel">
                     </div>
 

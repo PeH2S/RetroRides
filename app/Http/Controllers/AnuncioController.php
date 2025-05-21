@@ -33,6 +33,7 @@ class AnuncioController extends Controller
             'modelo' => 'required',
             'ano_modelo' => 'required',
             'ano_fabricacao' => 'required',
+            'combustivel' => 'required',
             'cor' => 'required'
         ]);
 
@@ -164,10 +165,10 @@ class AnuncioController extends Controller
             'modelo' => session('anuncio.step1.modelo'),
             'ano_modelo' => session('anuncio.step1.ano_modelo'),
             'ano_fabricacao' => session('anuncio.step1.ano_fabricacao'),
+            'combustivel' => session('anuncio.step1.combustivel'),  
             'cor' => session('anuncio.step1.cor'),
             'preco' => session('anuncio.step2.preco'),
             'quilometragem' => session('anuncio.step2.quilometragem'),
-            'combustivel' => session('anuncio.step2.combustivel'),
             'portas' => session('anuncio.step2.portas'),
             'placa' => session('anuncio.step2.placa'),
             'final_placa' => session('anuncio.step2.final_placa'),
