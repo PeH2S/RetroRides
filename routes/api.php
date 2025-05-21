@@ -7,4 +7,4 @@ use App\Http\Controllers\CarDataController;
 Route::get('/marcas', [CarDataController::class, 'getBrands']);
 Route::get('/modelos/{brandId}', [CarDataController::class, 'getModels']);
 Route::get('/anos/{brandId}/{modelId}', [CarDataController::class, 'getYears']);
-Route::get('/versoes/{brandId}/{modelId}/{yearId}', [CarDataController::class, 'getVersions']);
+Route::get('/detalhes/{brandId}/{modelId}/years/{yearId}', [CarDataController::class, 'getVehicleDetails']);

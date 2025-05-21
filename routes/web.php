@@ -27,4 +27,10 @@ Route::get('/anuncio/carro/etapa3', [AnuncioController::class, 'step3'])->name('
 Route::post('/anuncio/carro/etapa3', [AnuncioController::class, 'step3Post']);
 
 Route::get('/anuncio/carro/etapa4', [AnuncioController::class, 'step4'])->name('anuncio.step4');
-Route::post('/anuncio/finalizar', [AnuncioController::class, 'finalizar'])->name('anuncio.finalizar');
+Route::post('/anuncio/carro/etapa4', [AnuncioController::class, 'step4Post']);
+
+Route::get('/anuncio/finalizar', [AnuncioController::class, 'finalizar'])->name('anuncio.finalizar');
+Route::post('/anuncio/confirmar', [AnuncioController::class, 'confirmarAnuncio'])->name('anuncio.confirmar');
+
+
+Route::get('/anuncios/{id}', [AnuncioController::class, 'show'])->name('anuncio.show');

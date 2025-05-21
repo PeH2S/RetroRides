@@ -5,17 +5,17 @@
 
     <h2 class="text-center fw-bold mb-3">Informe as condições do veículo</h2>
     <p class="text-center text-muted mb-4">
-        Selecione os itens que representam o estado atual do seu veículo.
+        Selecione os itens que representam detalhes adicionais do seu veículo para despertar a atenção dos compradores.
     </p>
 
     <form action="{{ route('anuncio.step3') }}" method="POST">
         @csrf
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
-            @foreach(['Único Dono', 'IPVA Pago', 'Licenciado', 'Veículo de Colecionador'] as $index => $cond)
+            @foreach(['Único Dono', 'IPVA Pago', 'Não aceito troca', 'Veículo financiado', 'Licenciado', 'Garantia de Fábrica', 'Veículo de Colecionador', 'Todas as revisões em concessionária', 'Adaptado para pessoas com deficiência'] as $index => $item)
                 <label class="btn btn-outline-success rounded-pill px-4 py-2 condicao-btn" style="color: #004E64;" for="condicao{{ $index }}">
-                    <input type="checkbox" name="condicoes[]" value="{{ $cond }}" class="d-none condicao-checkbox" id="condicao{{ $index }}">
-                    {{ $cond }}
+                    <input type="checkbox" name="condicoes[]" value="{{ $item }}" class="d-none condicao-checkbox" id="condicao{{ $index }}">
+                    {{ $item }}
                 </label>
             @endforeach
         </div>

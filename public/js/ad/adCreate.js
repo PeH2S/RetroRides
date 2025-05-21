@@ -26,12 +26,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         data.forEach(item => {
             if (item && item.code && item.name) {
-                selectElement.innerHTML += `<option value="${item.code}">${item.name}</option>`;
+                let displayName = item.name;
+
+                if (selectElement.id === "ano_modelo" || selectElement.id === "ano_fabricacao") {
+                    displayName = item.name.split(' ')[0];
+                }
+
+                selectElement.innerHTML += `<option value="${item.code}">${displayName}</option>`;
             } else {
                 console.warn('Item inválido ignorado:', item);
             }
         });
     };
+
+
 
     fetch(`/api/marcas?tipo=${vehicleType}`)
         .then(res => {
@@ -102,21 +110,29 @@ document.addEventListener("DOMContentLoaded", () => {
         const anoId = anoModeloSelect.value;
         if (!marcaId || !modeloId || !anoId || anoId === 'undefined') return;
 
-        versaoSelect.disabled = false;
-        fillSelect(versaoSelect, [], 'Carregando...');
-
-        fetch(`/api/versoes/${marcaId}/${modeloId}/${anoId}?tipo=${vehicleType}`)
+        fetch(`/api/detalhes/${marcaId}/${modeloId}/${anoId}?tipo=${vehicleType}`)
             .then(res => {
-                if (!res.ok) throw new Error(`Erro ${res.status} ao carregar versões`);
+                if (!res.ok) throw new Error(`Erro ${res.status} ao buscar detalhes do veículo`);
                 return res.json();
             })
             .then(data => {
-                console.log('Versões recebidas:', data);
-                fillSelect(versaoSelect, data);
+                console.log("Detalhes do veículo:", data);
+                const combustivel = data.fuel || null;
+                if (combustivel) {
+                    document.getElementById("combustivel").value = combustivel;
+                }
+                console.log(combustivel);
             })
             .catch(error => {
-                console.error('Erro ao carregar versões:', error);
-                fillSelect(versaoSelect, [], 'Erro ao carregar');
+                console.error('Erro ao buscar combustível:', error);
             });
     });
+
+});
+document.getElementById("form-anuncio").addEventListener("submit", function (e) {
+    const combustivel = document.getElementById("combustivel").value;
+    if (!combustivel) {
+        e.preventDefault();
+        alert("Por favor, selecione o modelo e o ano do veículo para carregar o tipo de combustível.");
+    }
 });

@@ -46,6 +46,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-12">
+                        <label for="combustivel" class="form-label">Combustível*</label>
+                        <input type="text" class="form-control" id="combustivel_visivel" disabled>
+                        <input type="hidden" name="combustivel" id="combustivel">
+                    </div>
+
 
                     <div class="col-12">
                         <label for="cor" class="form-label">Cor*</label>
