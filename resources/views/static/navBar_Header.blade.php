@@ -77,7 +77,6 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarLogin">
                         <li><a class="dropdown-item" href="{{ route('home') }}">Login</a></li>
-                        <li><a class="dropdown-item" href="https://www.cockpit.com.br/" target="_blank" rel="noreferrer">Sou lojista</a></li>
                     </ul>
                 </div>
 
