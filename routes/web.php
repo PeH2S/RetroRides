@@ -3,8 +3,32 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AnuncioController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+
 
 Route::get('/', [HomeController::class, 'Home'])->name('home');
+
+// Formulário e submissão de login (apenas para guests)
+Route::middleware('guest')->group(function () {
+     // Login (já existente)
+    Route::get('login',  [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
+
+    // Registro
+    Route::get('register',  [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register']);
+});
+
+// Logout (usuário autenticado)
+Route::post('logout', [LoginController::class, 'logout'])->name('logout')
+     ->middleware('auth');
+
+// Rotas protegidas (exemplo: dashboard)
+Route::middleware('auth')->group(function () {
+    Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
+    // ... outras rotas que só o usuário logado pode acessar
+});
 
 
 Route::get('/anunciar', function(){

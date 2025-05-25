@@ -70,23 +70,46 @@
             </ul>
 
             <!-- Ações do Usuário -->
-            <div class="user-actions">
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarLogin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        ENTRAR
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarLogin">
-                        <li><a class="dropdown-item" href="{{ route('home') }}">Login</a></li>
-                    </ul>
-                </div>
-
-                <a class="nav-link" href="https://www.webmotors.com.br/garagem/favoritos" target="_blank" rel="noreferrer" aria-label="Visualizar favoritos">
-                    <i class="bi bi-heart"></i>
+            <div class="user-actions d-flex align-items-center">
+            {{-- dropdown de login/logout --}}
+            <div class="dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarLogin"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                >
+                @guest
+                    ENTRAR
+                @else
+                    {{ Auth::user()->name }}
+                @endguest
                 </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarLogin">
+                @guest
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
+                    <li><a class="dropdown-item" href="{{ route('register') }}">Registrar</a></li>
+                @else
+                    <li><a class="dropdown-item" href="{{ route('dashboard') }}">Meu painel</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="dropdown-item">Sair</button>
+                    </form>
+                    </li>
+                @endguest
+                </ul>
 
-                <a class="nav-link" href="https://www.webmotors.com.br/garagem/propostas" target="_blank" rel="noreferrer" aria-label="Visualizar chat">
-                    <i class="bi bi-chat"></i>
-                </a>
+            </div>
+
+            {{-- ícones com margem à esquerda --}}
+            <a href="#" class="nav-link ms-3"><i class="bi bi-heart"></i></a>
+            <a href="#" class="nav-link ms-3"><i class="bi bi-chat"></i></a>
+            </div>
+
             </div>
         </div>
     </div>
