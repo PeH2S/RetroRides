@@ -15,7 +15,7 @@ class AnuncioController extends Controller
 
     public function __construct(
         CarApiService $carApi
-    ){
+    ) {
         $this->carApi = $carApi;
     }
 
@@ -41,23 +41,23 @@ class AnuncioController extends Controller
         return redirect()->route('anuncio.step2');
     }
 
-   public function step2()
-{
-    $dadosEtapa1 = session('anuncio.step1');
+    public function step2()
+    {
+        $dadosEtapa1 = session('anuncio.step1');
 
-    if (!session('anuncio.step1')) {
-        return redirect()->route('anuncio.step1')->with('error', 'Preencha os dados do veículo primeiro.');
+        if (!session('anuncio.step1')) {
+            return redirect()->route('anuncio.step1')->with('error', 'Preencha os dados do veículo primeiro.');
+        }
+
+        $brandId = $dadosEtapa1['marca'];
+        $modelId = $dadosEtapa1['modelo'];
+        $yearId = $dadosEtapa1['ano_modelo'];       
+
+        $detalhes = $this->carApi->getVehicleDetails($brandId, $modelId, $yearId);
+        $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
+
+        return view('pages.anuncios.cars.create.step2', compact('precoFipe'));
     }
-
-    $brandId = $dadosEtapa1['marca'];           // deve ser o código da marca
-    $modelId = $dadosEtapa1['modelo'];          // deve ser o código do modelo
-    $yearId = $dadosEtapa1['ano_modelo'];       // deve ser o código do ano (ex: '2021-3')
-
-    $detalhes = $this->carApi->getVehicleDetails($brandId, $modelId, $yearId);
-    $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
-
-    return view('pages.anuncios.cars.create.step2', compact('precoFipe'));
-}
 
 
     public function step2Post(Request $request)
@@ -150,7 +150,6 @@ class AnuncioController extends Controller
 
     public function confirmarAnuncio(Request $request)
     {
-
         $requiredSteps = ['step1', 'step2', 'step3', 'step4'];
         foreach ($requiredSteps as $step) {
             if (!session("anuncio.$step")) {
@@ -162,14 +161,21 @@ class AnuncioController extends Controller
             return redirect()->route('anuncio.step4')->with('error', 'Adicione pelo menos uma foto do veículo.');
         }
 
-        // Cria o anúncio
+        // Obter os detalhes completos do veículo
+        $detalhesVeiculo = $this->carApi->getVehicleDetails(
+            session('anuncio.step1.marca'), // brandId
+            session('anuncio.step1.modelo'), // modelId
+            session('anuncio.step1.ano_modelo') // yearId
+        );
+
+        // Cria o anúncio com os nomes em vez dos IDs
         $anuncio = Anuncio::create([
             //'user_id' => auth()->id(),
-            'marca' => session('anuncio.step1.marca'),
-            'modelo' => session('anuncio.step1.modelo'),
+            'marca' => $detalhesVeiculo['brand'] ?? session('anuncio.step1.marca'), // Nome da marca
+            'modelo' => $detalhesVeiculo['model'] ?? session('anuncio.step1.modelo'), // Nome do modelo
             'ano_modelo' => session('anuncio.step1.ano_modelo'),
             'ano_fabricacao' => session('anuncio.step1.ano_fabricacao'),
-            'combustivel' => session('anuncio.step1.combustivel'),  
+            'combustivel' => session('anuncio.step1.combustivel'),
             'cor' => session('anuncio.step1.cor'),
             'preco' => session('anuncio.step2.preco'),
             'quilometragem' => session('anuncio.step2.quilometragem'),
@@ -180,7 +186,6 @@ class AnuncioController extends Controller
             'status' => 'ativo'
         ]);
 
-        // Processa as fotos
         $fotos = session('anuncio.temp_fotos', []);
         $principal = true;
 
@@ -220,6 +225,6 @@ class AnuncioController extends Controller
     {
         $anuncio = Anuncio::with('fotos')->findOrFail($id);
 
-        return view('pages.anuncios.cars.create.show', compact('anuncio'));
+        return view('pages.anuncios.cars.search.show', compact('anuncio'));
     }
 }

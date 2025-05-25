@@ -34,3 +34,11 @@ Route::post('/anuncio/confirmar', [AnuncioController::class, 'confirmarAnuncio']
 
 
 Route::get('/anuncios/{id}', [AnuncioController::class, 'show'])->name('anuncio.show');
+
+
+//mudar
+Route::get('/anuncios-carros', function(){
+    return view('pages.anuncios.cars.search.list');
+})->name('anuncios-carros');
+
+
