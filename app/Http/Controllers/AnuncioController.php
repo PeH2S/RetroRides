@@ -51,7 +51,7 @@ class AnuncioController extends Controller
 
         $brandId = $dadosEtapa1['marca'];
         $modelId = $dadosEtapa1['modelo'];
-        $yearId = $dadosEtapa1['ano_modelo'];       
+        $yearId = $dadosEtapa1['ano_modelo'];
 
         $detalhes = $this->carApi->getVehicleDetails($brandId, $modelId, $yearId);
         $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
@@ -161,27 +161,29 @@ class AnuncioController extends Controller
             return redirect()->route('anuncio.step4')->with('error', 'Adicione pelo menos uma foto do veículo.');
         }
 
-        // Obter os detalhes completos do veículo
+
         $detalhesVeiculo = $this->carApi->getVehicleDetails(
-            session('anuncio.step1.marca'), // brandId
-            session('anuncio.step1.modelo'), // modelId
-            session('anuncio.step1.ano_modelo') // yearId
+            session('anuncio.step1.marca'),
+            session('anuncio.step1.modelo'),
+            session('anuncio.step1.ano_modelo')
         );
 
         // Cria o anúncio com os nomes em vez dos IDs
         $anuncio = Anuncio::create([
             //'user_id' => auth()->id(),
-            'marca' => $detalhesVeiculo['brand'] ?? session('anuncio.step1.marca'), // Nome da marca
-            'modelo' => $detalhesVeiculo['model'] ?? session('anuncio.step1.modelo'), // Nome do modelo
+            'marca' => $detalhesVeiculo['brand'] ?? session('anuncio.step1.marca'),
+            'modelo' => $detalhesVeiculo['model'] ?? session('anuncio.step1.modelo'),
             'ano_modelo' => session('anuncio.step1.ano_modelo'),
             'ano_fabricacao' => session('anuncio.step1.ano_fabricacao'),
             'combustivel' => session('anuncio.step1.combustivel'),
             'cor' => session('anuncio.step1.cor'),
             'preco' => session('anuncio.step2.preco'),
+            'localizacao' => session('anuncion.step2.localiazacao'),
             'quilometragem' => session('anuncio.step2.quilometragem'),
             'portas' => session('anuncio.step2.portas'),
             'placa' => session('anuncio.step2.placa'),
             'descricao' => session('anuncio.step2.descricao'),
+            'situacao' => session('anuncio.step2.situacao'),
             'detalhes' => session('anuncio.step3.condicoes'),
             'status' => 'ativo'
         ]);

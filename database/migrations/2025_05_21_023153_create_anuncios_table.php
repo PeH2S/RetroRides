@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('combustivel');
             $table->integer('portas');
             $table->string('placa')->nullable();
+            $table->string('situacao');
+            $table->string('localizacao');
             $table->text('descricao')->nullable();
             $table->text('detalhes')->nullable();
             $table->integer('quilometragem');

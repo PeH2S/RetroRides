@@ -16,11 +16,12 @@ class Anuncio extends Model
         'ano_fabricacao',
         'cor',
         'preco',
+        'localizacao',
         'quilometragem',
         'combustivel',
         'portas',
         'placa',
-        'final_placa',
+        'situacao',
         'descricao',
         'status',
         // 'user_id' // autenticação de usuário
