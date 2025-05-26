@@ -11,7 +11,6 @@
     margin-right: 235px;
 }
 .logo-img {
-    height: 200px;
     width: auto;
     transition: transform 0.3s;
 }
@@ -146,7 +145,7 @@
     color: #fff;
 }
 .search-bar input {
-    background-color: #F4E3C3;
+    background-color: #fff;
     border: none;
     color: #004E64;
 }
@@ -168,19 +167,19 @@
 }
 .footer {
     background-color: #004E64;
-    color: #F4E3C3;
+    color: #fff;
     padding: 20px;
     text-align: center;
 }
 .btn-custom {
     background-color: #004E64;
-    color: #F4E3C3;
+    color: #fff;
     border: none;
     width: 100%;
     text-transform: uppercase;
 }
 .btn-custom:hover {
-    background-color: #F4E3C3;
+    background-color: #fff;
     color: #004E64;
 }
 
