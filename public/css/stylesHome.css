@@ -138,17 +138,7 @@
     animation: fadeIn 0.2s ease-out;
 }
 
-.search-bar {
-    background-color: #004E64;
-    padding: 20px;
-    border-radius: 8px;
-    color: #fff;
-}
-.search-bar input {
-    background-color: #fff;
-    border: none;
-    color: #004E64;
-}
+
 .card {
     background-color: #fff;
     border: none;

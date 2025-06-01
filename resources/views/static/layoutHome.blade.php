@@ -15,7 +15,6 @@
 
 
     <!-- Seus estilos locais -->
-    <link rel="stylesheet" href="{{ asset('css/teste.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesHome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesNavBar.css') }}">
 </head>
@@ -31,9 +30,9 @@
 
 
 
-    <div class="container mt-5">
-        @yield('main')
-    </div>
+
+    @yield('main')
+
 
     <!-- Rodapé -->
     @include('static.footer')

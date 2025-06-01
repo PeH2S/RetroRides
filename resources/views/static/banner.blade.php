@@ -1,19 +1,102 @@
-<div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="{{ asset('images/banners/banner1.png') }}" class="d-block w-100" alt="Banner 1">
+<style>
+.hero-section {
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to right, #30849b, #004E64);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.hero-content {
+    max-width: 1140px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+
+.filtros .filtro-item {
+  background: #333;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 8px;
+  margin: 0 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.filtros .filtro-item input[type="checkbox"] {
+  accent-color: white;
+  margin: 0;
+}
+
+.search-box {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  width: 500px;
+  max-width: 90%;
+}
+
+.search-input {
+  border: none;
+  padding: 12px 15px;
+  flex: 1;
+  font-size: 16px;
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.search-button {
+  background: #013746;
+  border: none;
+  padding: 0 20px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+</style>
+<section class="hero-section text-center d-flex align-items-center">
+  <div class="hero-content mx-auto">
+    <div class="filtros d-flex justify-content-center mb-3">
+      <label class="filtro-item">
+        <input type="checkbox" checked>
+        <span>0 km</span>
+      </label>
+      <label class="filtro-item">
+        <input type="checkbox" checked>
+        <span>Usados</span>
+      </label>
+      <label class="filtro-item">
+        <input type="checkbox">
+        <span>Apenas com financiamento</span>
+      </label>
     </div>
-    <div class="carousel-item">
-      <img src="{{ asset('images/banners/banner1.png') }}" class="d-block w-100" alt="Banner 2">
+
+    <div class="search-bar d-flex justify-content-center">
+      <div class="search-box d-flex">
+        <input type="text" class="search-input" placeholder="Busque por marca e modelo">
+        <button class="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
     </div>
-    <div class="carousel-item">
-      <img src="{{ asset('images/banners/banner1.png') }}" class="d-block w-100" alt="Banner 3">
-    </div>
+
+    <p class="mt-4 text-white">
+      <i class="bi bi-geo-alt-fill"></i> Presidente Prudente - SP
+    </p>
   </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-  </button>
-</div>
+</section>
