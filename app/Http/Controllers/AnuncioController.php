@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use App\Services\CarApiService;
 use App\Models\Anuncio;
 use App\Models\AnuncioFoto;
+use App\Services\GeocodingService;
+
 
 class AnuncioController extends Controller
 {
@@ -62,11 +65,16 @@ class AnuncioController extends Controller
 
     public function step2Post(Request $request)
     {
-        session(['anuncio.step2' => $request->except('_token')]);
         $request->validate([
             'placa' => 'required|string|size:7|alpha_num',
+            'localizacao' => 'required|string|max:100',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'cidade' => 'required|string|max:50',
+            'estado' => 'required|string|size:2',
         ]);
 
+        session(['anuncio.step2' => $request->except('_token')]);
         return redirect()->route('anuncio.step3');
     }
 
@@ -178,7 +186,11 @@ class AnuncioController extends Controller
             'combustivel' => session('anuncio.step1.combustivel'),
             'cor' => session('anuncio.step1.cor'),
             'preco' => session('anuncio.step2.preco'),
-            'localizacao' => session('anuncion.step2.localiazacao'),
+            'localizacao' => session('anuncio.step2.localizacao'),
+            'latitude' => session('anuncio.step2.latitude'),
+            'longitude' => session('anuncio.step2.longitude'),
+            'cidade' => session('anuncio.step2.cidade'),
+            'estado' => session('anuncio.step2.estado'),
             'quilometragem' => session('anuncio.step2.quilometragem'),
             'portas' => session('anuncio.step2.portas'),
             'placa' => session('anuncio.step2.placa'),
@@ -229,4 +241,40 @@ class AnuncioController extends Controller
 
         return view('pages.anuncios.cars.search.show', compact('anuncio'));
     }
+
+
+
+
+   public function search(Request $request)
+    {
+        $query = trim(strip_tags($request->input('q')));
+        $location = session('user_location');
+
+        $anuncios = Anuncio::query()
+            ->when($query, function ($q) use ($query) {
+                $q->where(function($queryBuilder) use ($query) {
+                    $queryBuilder->where('marca', 'LIKE', "%{$query}%")
+                        ->orWhere('modelo', 'LIKE', "%{$query}%")
+                        ->orWhere('cidade', 'LIKE', "%{$query}%");
+                });
+            })
+            ->when($location, function ($q) use ($location) {
+                $q->selectRaw("*,
+                    (6371 * acos(
+                        cos(radians(?)) *
+                        cos(radians(latitude)) *
+                        cos(radians(longitude) - radians(?)) +
+                        sin(radians(?)) *
+                        sin(radians(latitude))
+                    ) AS distance",
+                    [$location['latitude'], $location['longitude'], $location['latitude']])
+                ->orderBy('distance');
+            }, function ($q) {
+                $q->latest();
+            })
+            ->paginate(10);
+
+        return view('pages.anuncios.cars.search.list', compact('anuncios'));
+    }
+
 }

@@ -180,3 +180,44 @@
     object-fit: cover;
 }
 
+
+
+.location-card {
+    max-width: 600px;
+    margin: 2rem auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.location-header {
+    background-color: #004E64;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.location-options {
+    padding: 2rem;
+}
+
+.location-btn {
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.location-btn i {
+    margin-right: 8px;
+}
+
+.distance-badge {
+    background: #004E64;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}

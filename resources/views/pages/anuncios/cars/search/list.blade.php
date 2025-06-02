@@ -89,20 +89,22 @@
             <div class="col-md-9">
                 <div class="row g-3">
 
-                    @foreach (range(1, 6) as $i)
-                        <div class="col-md-4">
-                            <div class="card-veiculo">
-                                <img src="https://via.placeholder.com/300x180?text=Veiculo+{{ $i }}"
-                                    alt="Veículo">
-                                <div class="card-body">
-                                    <h6>Veículo {{ $i }} - Modelo</h6>
-                                    <p class="text-muted mb-1">Ano 2025/2025 • 0 Km</p>
-                                    <p class="preco">R$ {{ number_format(100000 + $i * 10000, 0, ',', '.') }}</p>
-                                    <a href="#" class="btn btn-dark w-100">Ver oferta</a>
-                                </div>
+                    @if ($anuncios->isEmpty())
+                        <p>Nenhum anúncio encontrado para sua busca.</p>
+                    @else
+                        @foreach ($anuncios as $anuncio)
+                            <div class="car-card mb-4">
+                                <h4>{{ $anuncio->marca }} {{ $anuncio->modelo }}</h4>
+                                <p>Ano: {{ $anuncio->ano_modelo }}</p>
+                                <p>Preço: R$ {{ number_format($anuncio->preco, 2, ',', '.') }}</p>
+                                @if (isset($anuncio->distance))
+                                    <p class="text-muted">Distância: {{ round($anuncio->distance, 1) }} km</p>
+                                @endif
+                                <a href="{{ route('anuncio.show', $anuncio->id) }}" class="btn btn-primary">Ver detalhes</a>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
+
                 </div>
             </div>
         </div>

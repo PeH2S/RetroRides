@@ -7,7 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 
-Route::get('/', [HomeController::class, 'Home'])->name('home');
+//Route::get('/', [HomeController::class, 'Home'])->name('home');
 
 // Formulário e submissão de login (apenas para guests)
 Route::middleware('guest')->group(function () {
@@ -66,3 +66,27 @@ Route::get('/anuncios-carros', function(){
 })->name('anuncios-carros');
 
 
+Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
+
+
+Route::middleware(['web', 'location'])->group(function () {
+    Route::get('/', [HomeController::class, 'Home'])->name('home');
+    Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
+});
+
+
+Route::post('/definir-localizacao', function (Request $request) {
+    $request->validate([
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric'
+    ]);
+
+    session(['user_location' => [
+        'latitude' => $request->latitude,
+        'longitude' => $request->longitude,
+        'cidade' => null,
+        'estado' => null
+    ]]);
+
+    return response()->json(['ok' => true]);
+})->name('definir.localizacao');

@@ -87,12 +87,12 @@
     </div>
 
     <div class="search-bar d-flex justify-content-center">
-      <div class="search-box d-flex">
-        <input type="text" class="search-input" placeholder="Busque por marca e modelo">
-        <button class="search-button">
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
+        <form action="{{ route('search.cars') }}" method="GET" class="search-box d-flex">
+            <input type="text" name="q" class="search-input" placeholder="Busque por marca e modelo">
+            <button type="submit" class="search-button">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
     </div>
 
     <p class="mt-4 text-white">

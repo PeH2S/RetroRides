@@ -49,4 +49,7 @@ class CarDataController extends Controller
         $versions = $this->carApiService->getVehicleDetails($brandId, $modelId, $yearId);
         return response()->json($versions);
     }
+
+
+    
 }
