@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AnuncioController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
@@ -66,10 +67,10 @@ Route::get('/anuncios-carros', function(){
 })->name('anuncios-carros');
 
 
-Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
+//Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
 
 
-Route::middleware(['web', 'location'])->group(function () {
+Route::middleware(['location'])->group(function () {
     Route::get('/', [HomeController::class, 'Home'])->name('home');
     Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
 });

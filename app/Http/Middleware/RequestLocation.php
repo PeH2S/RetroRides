@@ -15,28 +15,26 @@ class RequestLocation
      */
     public function handle(Request $request, Closure $next)
     {
-
-        dd($request->session()->all());
         $excludedRoutes = [
             'login',
             'register',
-            'logout'
+            'logout',
         ];
 
-        //if (in_array($request->route()?->getName(), $excludedRoutes) || $request->isMethod('post')) {
-            //return $next($request);
-        //}
-
-        $routeName = $request->route()?->getName();
-        if (($routeName && in_array($routeName, $excludedRoutes)) || $request->isMethod('post')) {
+        if (
+            in_array($request->route()?->getName(), $excludedRoutes) ||
+            $request->isMethod('post') ||
+            $request->is('api/*')
+        ) {
             return $next($request);
         }
 
-        if ($request->hasSession() && $request->session()->has('user_location') || $request->is('api/*')) {
-            return $next($request);
+        if ($request->is('/') && (!$request->hasSession() || !$request->session()->has('user_location'))) {
+            return redirect('/'); 
         }
 
-        return redirect('/');
+        return $next($request);
     }
+
 
 }

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Menu Webmotors</title>
 
     <!-- Bootstrap 5 CSS -->
@@ -36,36 +37,44 @@
 
     <script>
         if (navigator.geolocation && !sessionStorage.getItem('locationSent')) {
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const {
-                    latitude,
-                    longitude
-                } = position.coords;
-
-                try {
-                    const response = await fetch('/definir-localizacao', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        },
-                        body: JSON.stringify({
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                        const {
                             latitude,
                             longitude
-                        })
-                    });
+                        } = position.coords;
+                        try {
+                            const response = await fetch('/definir-localizacao', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                        .getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    latitude,
+                                    longitude
+                                })
+                            });
 
-                    if (response.ok) {
-                        sessionStorage.setItem('locationSent', true);
-                        location.reload(); // opcional: recarrega a página para aplicar filtro por distância
+                            if (response.ok) {
+                                sessionStorage.setItem('locationSent', 'true');
+                                location
+                            .reload();
+                            } else {
+                                console.error('Resposta inesperada do servidor:', response.status);
+                            }
+                        } catch (e) {
+                            console.error('Erro ao definir localização:', e);
+                        }
+                    },
+                    (error) => {
+                        console.warn('Permissão de localização negada ou erro:', error);
                     }
-                } catch (e) {
-                    console.error('Erro ao definir localização:', e);
-                }
-            });
+            );
         }
     </script>
+
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
