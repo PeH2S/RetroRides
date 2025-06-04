@@ -32,7 +32,7 @@ class LocationController extends Controller
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],
             'cidade' => $geoData['address']['city'] ?? $geoData['address']['town'] ?? null,
-            'estado' => $geoData['address']['state'] ?? null,
+            'estado' => $this->converterEstadoParaUF($geoData['address']['state'] ?? null),
         ]);
 
         return response()->json([
@@ -40,4 +40,20 @@ class LocationController extends Controller
             'estado' => Session::get('user_location.estado'),
         ]);
     }
+
+    private function converterEstadoParaUF(?string $estado): ?string
+    {
+        $ufs = [
+            'Acre' => 'AC', 'Alagoas' => 'AL', 'Amapá' => 'AP', 'Amazonas' => 'AM',
+            'Bahia' => 'BA', 'Ceará' => 'CE', 'Distrito Federal' => 'DF', 'Espírito Santo' => 'ES',
+            'Goiás' => 'GO', 'Maranhão' => 'MA', 'Mato Grosso' => 'MT', 'Mato Grosso do Sul' => 'MS',
+            'Minas Gerais' => 'MG', 'Pará' => 'PA', 'Paraíba' => 'PB', 'Paraná' => 'PR',
+            'Pernambuco' => 'PE', 'Piauí' => 'PI', 'Rio de Janeiro' => 'RJ', 'Rio Grande do Norte' => 'RN',
+            'Rio Grande do Sul' => 'RS', 'Rondônia' => 'RO', 'Roraima' => 'RR', 'Santa Catarina' => 'SC',
+            'São Paulo' => 'SP', 'Sergipe' => 'SE', 'Tocantins' => 'TO'
+        ];
+
+        return $ufs[$estado] ?? null;
+    }
+
 }

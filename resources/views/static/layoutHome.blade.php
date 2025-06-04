@@ -22,7 +22,7 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar-expand-lg">
+    <nav class="navbar-expand-lg " style="margin-bottom: 5em;">
         <div class="w-100">
             @include('static.navBar_Header')
         </div>
