@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash; // importa corretamente o facade Hash
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,12 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Cria um usuário administrador com senha “123”
         User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'adm@adm.com',
-            'password' => Hash('123')
+            'name'     => 'Admin',
+            'email'    => 'adm@adm.com',
+            'password' => Hash::make('123')  // CORRETO: Hash::make em vez de Hash('123')
         ]);
+
+        // Chama outros seeders (ex.: o seeder de anúncios)
+        $this->call(AnuncioSeeder::class);
     }
 }

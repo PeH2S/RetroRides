@@ -6,14 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('anuncio_fotos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('anuncio_id')->constrained('anuncios')->onDelete('cascade');
+
+            $table->foreignId('anuncio_id')
+                  ->constrained('anuncios')
+                  ->onDelete('cascade');
+
             $table->string('caminho');
             $table->boolean('principal')->default(false);
             $table->integer('ordem')->default(1);
@@ -21,10 +22,6 @@ return new class extends Migration
         });
     }
 
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('anuncio_fotos');
