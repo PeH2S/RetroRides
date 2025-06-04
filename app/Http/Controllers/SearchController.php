@@ -6,27 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\Anuncio;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use Illuminate\Support\Str;
 
 class SearchController extends Controller
 {
-    protected $anuncioController;
-
-    public function __construct(AnuncioController $anuncioController)
-    {
-        $this->anuncioController = $anuncioController;
-    }
 
     public function index(Request $request)
     {
         $query = Anuncio::query();
-
-        if ($request->filled('q')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('marca', 'like', "%{$request->q}%")
-                  ->orWhere('modelo', 'like', "%{$request->q}%");
-            });
-        }
 
         $latitude = null;
         $longitude = null;
@@ -42,33 +29,68 @@ class SearchController extends Controller
             $longitude = $userLocation['longitude'] ?? null;
         }
 
-        if ($latitude !== null && $longitude !== null) {
-            $anuncios = $this->anuncioController->anunciosProximos($latitude, $longitude, $raioKm);
+        if ($request->filled('q')) {
+            $termos = explode('-', Str::slug($request->q));
 
-            if ($request->filled('q')) {
-                $anuncios = $anuncios->filter(function($anuncio) use ($request) {
-                    return str_contains(strtolower($anuncio->marca), strtolower($request->q))
-                        || str_contains(strtolower($anuncio->modelo), strtolower($request->q));
-                });
-            }
-
-            $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 15;
-            $currentItems = $anuncios->slice(($currentPage - 1) * $perPage, $perPage)->values();
-
-            $anuncios = new \Illuminate\Pagination\LengthAwarePaginator(
-                $currentItems,
-                $anuncios->count(),
-                $perPage,
-                $currentPage,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
-
-        } else {
-            $anuncios = $query->paginate(15);
+            $query->where(function($q) use ($termos) {
+                foreach ($termos as $termo) {
+                    $q->orWhere('marca', 'like', "%{$termo}%")
+                    ->orWhere('modelo', 'like', "%{$termo}%");
+                }
+            });
         }
 
-        return view('pages.anuncios.cars.search.list', compact('anuncios'));
+        $anuncios = $query->get();
 
+        if ($latitude !== null && $longitude !== null) {
+            $anuncios = $anuncios->map(function($anuncio) use ($latitude, $longitude) {
+                $distancia = $this->calcularDistancia(
+                    $latitude,
+                    $longitude,
+                    $anuncio->latitude,
+                    $anuncio->longitude
+                );
+
+                $anuncio->distancia = $distancia;
+                return $anuncio;
+            })
+            ->sortBy('distancia');
+        }
+
+        // Paginação manual (já que estamos trabalhando com Collection)
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 15;
+        $currentItems = $anuncios->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $anuncios = new LengthAwarePaginator(
+            $currentItems,
+            $anuncios->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('pages.anuncios.cars.search.list', compact('anuncios'));
     }
+
+/**
+ * Calcula a distância entre duas coordenadas (em km) usando a fórmula Haversine.
+ */
+    private function calcularDistancia($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c; 
+    }
+
+
 }

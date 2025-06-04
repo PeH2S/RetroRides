@@ -247,18 +247,19 @@ class AnuncioController extends Controller
 
     public function anunciosProximos(float $latitude, float $longitude, float $raioKm = 100)
     {
-         return Anuncio::selectRaw(
-                "id, preco, latitude, longitude,
-                (6371 * ACOS(
-                    COS(RADIANS(?)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(?)) +
-                    SIN(RADIANS(?)) * SIN(RADIANS(latitude))
-                )) AS distancia",
-                [$latitude, $longitude, $latitude]
-            )
-            ->having('distancia', '<=', $raioKm)
-            ->orderBy('distancia')
-            ->get();
+        return Anuncio::selectRaw(
+            "*,
+            (6371 * ACOS(
+                COS(RADIANS(?)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(?)) +
+                SIN(RADIANS(?)) * SIN(RADIANS(latitude))
+            )) AS distancia",
+            [$latitude, $longitude, $latitude]
+        )
+        ->having('distancia', '<=', $raioKm)
+        ->orderBy('distancia')
+        ->get();
     }
+
 
 
 }

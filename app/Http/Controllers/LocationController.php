@@ -35,6 +35,7 @@ class LocationController extends Controller
             'estado' => $this->converterEstadoParaUF($geoData['address']['state'] ?? null),
         ]);
 
+        
         return response()->json([
             'cidade' => Session::get('user_location.cidade'),
             'estado' => Session::get('user_location.estado'),
