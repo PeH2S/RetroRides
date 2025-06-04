@@ -8,17 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RequestLocation
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next)
     {
         $excludedRoutes = [
-            'login',
-            'register',
-            'logout',
+            'login', 'register', 'logout', 'search.cars'
         ];
 
         if (
@@ -30,11 +23,10 @@ class RequestLocation
         }
 
         if ($request->is('/') && (!$request->hasSession() || !$request->session()->has('user_location'))) {
-            return redirect('/'); 
+            return $next($request); 
         }
 
         return $next($request);
     }
-
-
 }
+

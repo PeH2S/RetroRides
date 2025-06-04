@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
   <div class="container">
     <!-- Logo -->
-    <a class="navbar-brand fw-bold text-orange" href="#">
+    <a class="navbar-brand fw-bold text-orange" href="{{ route('home') }}">
       <span style="color: #004E64">Retro Riders</span>
     </a>
 

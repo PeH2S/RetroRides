@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\SearchController;
 
 //Route::get('/', [HomeController::class, 'Home'])->name('home');
 
@@ -72,22 +73,9 @@ Route::get('/anuncios-carros', function(){
 
 Route::middleware(['location'])->group(function () {
     Route::get('/', [HomeController::class, 'Home'])->name('home');
-    Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
+    Route::get('/search', [SearchController::class, 'index'])->name('search.cars');
 });
 
 
-Route::post('/definir-localizacao', function (Request $request) {
-    $request->validate([
-        'latitude' => 'required|numeric',
-        'longitude' => 'required|numeric'
-    ]);
-
-    session(['user_location' => [
-        'latitude' => $request->latitude,
-        'longitude' => $request->longitude,
-        'cidade' => null,
-        'estado' => null
-    ]]);
-
-    return response()->json(['ok' => true]);
-})->name('definir.localizacao');
+Route::post('/definir-localizacao', [LocationController::class, 'store'])
+     ->name('location.store');

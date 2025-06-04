@@ -245,36 +245,20 @@ class AnuncioController extends Controller
 
 
 
-   public function search(Request $request)
+    public function anunciosProximos(float $latitude, float $longitude, float $raioKm = 100)
     {
-        $query = trim(strip_tags($request->input('q')));
-        $location = session('user_location');
-
-        $anuncios = Anuncio::query()
-            ->when($query, function ($q) use ($query) {
-                $q->where(function($queryBuilder) use ($query) {
-                    $queryBuilder->where('marca', 'LIKE', "%{$query}%")
-                        ->orWhere('modelo', 'LIKE', "%{$query}%")
-                        ->orWhere('cidade', 'LIKE', "%{$query}%");
-                });
-            })
-            ->when($location, function ($q) use ($location) {
-                $q->selectRaw("*,
-                    (6371 * acos(
-                        cos(radians(?)) *
-                        cos(radians(latitude)) *
-                        cos(radians(longitude) - radians(?)) +
-                        sin(radians(?)) *
-                        sin(radians(latitude))
-                    ) AS distance",
-                    [$location['latitude'], $location['longitude'], $location['latitude']])
-                ->orderBy('distance');
-            }, function ($q) {
-                $q->latest();
-            })
-            ->paginate(10);
-
-        return view('pages.anuncios.cars.search.list', compact('anuncios'));
+         return Anuncio::selectRaw(
+                "id, preco, latitude, longitude,
+                (6371 * ACOS(
+                    COS(RADIANS(?)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(?)) +
+                    SIN(RADIANS(?)) * SIN(RADIANS(latitude))
+                )) AS distancia",
+                [$latitude, $longitude, $latitude]
+            )
+            ->having('distancia', '<=', $raioKm)
+            ->orderBy('distancia')
+            ->get();
     }
+
 
 }
