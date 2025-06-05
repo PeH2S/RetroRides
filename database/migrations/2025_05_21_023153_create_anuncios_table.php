@@ -13,15 +13,22 @@ return new class extends Migration
     {
         Schema::create('anuncios', function (Blueprint $table) {
             $table->id();
-
-            // -> adiciona user_id referenciando users.id
-            $table->foreignId('user_id')
-                  ->constrained()
-                  ->onDelete('cascade');
-
-            $table->string('titulo');
-            $table->text('descricao');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('marca');
+            $table->string('modelo');
+            $table->string('ano_modelo');
+            $table->string('ano_fabricacao');
+            $table->string('cor');
+            $table->string('combustivel');
+            $table->integer('portas');
+            $table->string('placa')->nullable();
+            $table->string('situacao');
+            $table->string('localizacao');
+            $table->text('descricao')->nullable();
+            $table->text('detalhes')->nullable();
+            $table->integer('quilometragem');
             $table->decimal('preco', 10, 2);
+            $table->enum('status', ['ativo', 'inativo'])->default('ativo');
             $table->timestamps();
         });
     }

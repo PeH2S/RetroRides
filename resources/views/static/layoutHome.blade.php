@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Menu Webmotors</title>
 
     <!-- Bootstrap 5 CSS -->
@@ -16,28 +17,80 @@
 
 
     <!-- Seus estilos locais -->
-    <link rel="stylesheet" href="{{ asset('css/teste.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesHome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesNavBar.css') }}">
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar-expand-lg">
+    <nav class="navbar-expand-lg " style="margin-bottom: 5em;">
         <div class="w-100">
             @include('static.navBar_Header')
         </div>
     </nav>
 
 
+    @yield('main')
 
-
-    <div class="container mt-5">
-        @yield('main')
-    </div>
 
     <!-- Rodapé -->
     @include('static.footer')
+
+    <script>
+        const isSearchPage = window.location.pathname.includes('/search');
+
+        async function handleLocation(position) {
+            const {
+                latitude,
+                longitude
+            } = position.coords;
+
+            try {
+                const response = await fetch('/definir-localizacao', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        latitude,
+                        longitude
+                    })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                const data = await response.json();
+
+                if (isSearchPage) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('localizacao', `${latitude},${longitude}x100km`);
+                    url.searchParams.set('estadocidade', `${data.estado}-${data.cidade}`);
+                    window.location.assign(url.toString());
+                }
+            } catch (e) {
+                console.error('Falha ao processar localização:', e);
+                alert('Falha ao processar localização');
+            }
+        }
+
+        if (navigator.geolocation && !sessionStorage.getItem('locationSent')) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    sessionStorage.setItem('locationSent', 'true');
+                    handleLocation(position);
+                },
+                error => {
+                    console.warn('Permissão negada ou erro ao obter localização:', error);
+                    sessionStorage.setItem('locationSent', 'true');
+                }
+            );
+        }
+    </script>
+
+
+
+
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

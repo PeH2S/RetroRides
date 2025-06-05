@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use App\Services\CarApiService;
 use App\Models\Anuncio;
 use App\Models\AnuncioFoto;
+use App\Services\GeocodingService;
+
 
 class AnuncioController extends Controller
 {
@@ -75,17 +78,17 @@ class AnuncioController extends Controller
      */
     public function step2Post(Request $request)
     {
-        $data = $request->validate([
-            'preco'         => 'required|numeric',
-            'localizacao'   => 'required|string|max:255',
-            'quilometragem' => 'required|integer',
-            'portas'        => 'required|integer',
-            'placa'         => 'required|string|max:10',
-            'situacao'      => 'required|string|max:50',
-            'descricao'     => 'nullable|string',
+
+        $request->validate([
+            'placa' => 'required|string|size:7|alpha_num',
+            'localizacao' => 'required|string|max:100',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'cidade' => 'required|string|max:50',
+            'estado' => 'required|string|size:2',
         ]);
 
-        session(['anuncio.step2' => $data]);
+        session(['anuncio.step2' => $request->except('_token')]);
         return redirect()->route('anuncio.step3');
     }
 
@@ -216,25 +219,27 @@ class AnuncioController extends Controller
 
         // Cria o anúncio no banco, atribuindo user_id
         $anuncio = Anuncio::create([
-            'user_id'        => auth()->id(),
-            'titulo'         => $dados1['titulo'],
-            'descricao'      => $dados1['descricao'],
-            'marca'          => $detalhesVeiculo['brand']    ?? $dados1['marca'],
-            'modelo'         => $detalhesVeiculo['model']    ?? $dados1['modelo'],
-            'ano_modelo'     => $dados1['ano_modelo'],
-            'ano_fabricacao' => $dados1['ano_fabricacao']    ?? null,
-            'combustivel'    => $dados1['combustivel']       ?? null,
-            'cor'            => $dados1['cor']               ?? null,
-            'preco'          => $dados2['preco'],
-            'localizacao'    => $dados2['localizacao'],
-            'quilometragem'  => $dados2['quilometragem'],
-            'portas'         => $dados2['portas'],
-            'placa'          => $dados2['placa'],
-            'situacao'       => $dados2['situacao'],
-            'detalhes'       => implode(', ', $dados3['condicoes'] ?? []),
-            'opcionais'      => $dados3['opcionais']         ?? null,
-            'observacoes'    => $dados3['observacoes']       ?? null,
-            'status'         => 'ativo',
+
+            'user_id' => auth()->id(),
+            'marca' => $detalhesVeiculo['brand'] ?? session('anuncio.step1.marca'),
+            'modelo' => $detalhesVeiculo['model'] ?? session('anuncio.step1.modelo'),
+            'ano_modelo' => session('anuncio.step1.ano_modelo'),
+            'ano_fabricacao' => session('anuncio.step1.ano_fabricacao'),
+            'combustivel' => session('anuncio.step1.combustivel'),
+            'cor' => session('anuncio.step1.cor'),
+            'preco' => session('anuncio.step2.preco'),
+            'localizacao' => session('anuncio.step2.localizacao'),
+            'latitude' => session('anuncio.step2.latitude'),
+            'longitude' => session('anuncio.step2.longitude'),
+            'cidade' => session('anuncio.step2.cidade'),
+            'estado' => session('anuncio.step2.estado'),
+            'quilometragem' => session('anuncio.step2.quilometragem'),
+            'portas' => session('anuncio.step2.portas'),
+            'placa' => session('anuncio.step2.placa'),
+            'descricao' => session('anuncio.step2.descricao'),
+            'situacao' => session('anuncio.step2.situacao'),
+            'detalhes' => session('anuncio.step3.condicoes'),
+            'status' => 'ativo'
         ]);
 
         // Move cada foto do temporário para “anuncios/” e salva em AnuncioFoto
@@ -279,4 +284,25 @@ class AnuncioController extends Controller
         $anuncio = Anuncio::with('fotos', 'user')->findOrFail($id);
         return view('pages.anuncios.cars.search.show', compact('anuncio'));
     }
+
+
+
+
+    public function anunciosProximos(float $latitude, float $longitude, float $raioKm = 100)
+    {
+        return Anuncio::selectRaw(
+            "*,
+            (6371 * ACOS(
+                COS(RADIANS(?)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(?)) +
+                SIN(RADIANS(?)) * SIN(RADIANS(latitude))
+            )) AS distancia",
+            [$latitude, $longitude, $latitude]
+        )
+        ->having('distancia', '<=', $raioKm)
+        ->orderBy('distancia')
+        ->get();
+    }
+
+
+
 }

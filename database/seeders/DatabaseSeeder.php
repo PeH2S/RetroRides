@@ -13,14 +13,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Cria um usuário administrador com senha “123”
         User::factory()->create([
-            'name'     => 'Admin',
-            'email'    => 'adm@adm.com',
-            'password' => Hash::make('123')  // CORRETO: Hash::make em vez de Hash('123')
+
+            'name' => 'Admin',
+            'email' => 'adm@adm.com',
+            'password' => Hash::make('123')
         ]);
 
-        // Chama outros seeders (ex.: o seeder de anúncios)
-        $this->call(AnuncioSeeder::class);
+
+        $this->call([
+                AnuncioSeeder::class,
+            ]);
+
     }
 }
