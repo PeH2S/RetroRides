@@ -28,6 +28,10 @@ return new class extends Migration
             $table->text('detalhes')->nullable();
             $table->integer('quilometragem');
             $table->decimal('preco', 10, 2);
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->string('cidade')->nullable();
+            $table->string('estado')->nullable();
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
             $table->timestamps();
         });

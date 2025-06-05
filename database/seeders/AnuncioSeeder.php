@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Anuncio;
+use App\Models\User;
 use Faker\Factory as Faker;
 
 class AnuncioSeeder extends Seeder
@@ -11,6 +12,8 @@ class AnuncioSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create('pt_BR');
+
+        $users = User::factory(5)->create();
 
         $cidades = [
             ['cidade' => 'São Paulo', 'estado' => 'SP', 'latitude' => -23.5505, 'longitude' => -46.6333],
@@ -47,11 +50,11 @@ class AnuncioSeeder extends Seeder
 
             $anoFabricacao = $faker->numberBetween(2010, 2023);
             $anoModelo = $anoFabricacao + $faker->numberBetween(0, 1);
-
             $quilometragem = $faker->numberBetween(0, 200000);
             $preco = $this->gerarPreco($modelo, $anoFabricacao, $quilometragem);
 
             Anuncio::create([
+                'user_id' => $faker->randomElement($users)->id, // Associando a um dos usuários criados
                 'marca' => $veiculo['marca'],
                 'modelo' => $modelo,
                 'ano_modelo' => $anoModelo,
@@ -81,9 +84,6 @@ class AnuncioSeeder extends Seeder
         $reducaoKm = min($km * 0.1, 30000);
         $ajuste = rand(-2000, 5000);
 
-        $preco = $precoBase - $reducaoKm + $ajuste;
-
-        return max($preco, 5000);
-
+        return max($precoBase - $reducaoKm + $ajuste, 5000);
     }
 }
