@@ -70,7 +70,21 @@ class SearchController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('pages.anuncios.cars.search.list', compact('anuncios'));
+        $location = [
+            'cidade' => '',
+            'estado' => ''
+        ];
+        if(Session::has('user_location')){
+            $userLocation = Session::get('user_location');
+            if(isset($userLocation['cidade'], $userLocation['estado'])){
+                $location['cidade'] = $userLocation['cidade'];
+                $location['estado'] = $userLocation['estado'];
+            }
+        }
+
+
+
+        return view('pages.anuncios.cars.search.list', compact('anuncios', 'location'));
     }
 
 /**
@@ -89,7 +103,7 @@ class SearchController extends Controller
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-        return $earthRadius * $c; 
+        return $earthRadius * $c;
     }
 
 

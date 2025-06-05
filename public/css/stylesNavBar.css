@@ -36,9 +36,7 @@ header {
   position: relative;
 }
 
-.navbar-custom .nav-link {
-  font-weight: bold;
-}
+
 
 .navbar-custom .dropdown-toggle::after {
   display: none;

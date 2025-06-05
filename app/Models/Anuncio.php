@@ -10,10 +10,8 @@ class Anuncio extends Model
 {
     use HasFactory;
 
-    // Campos que podem ser preenchidos em massa
     protected $fillable = [
         'user_id',
-        'titulo',
         'descricao',
         'marca',
         'modelo',
@@ -33,17 +31,11 @@ class Anuncio extends Model
         'status',
     ];
 
-    /**
-     * Relação: cada Anuncio pertence a um User.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relação: um Anuncio pode ter várias fotos.
-     */
     public function fotos()
     {
         return $this->hasMany(AnuncioFoto::class);

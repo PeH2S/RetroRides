@@ -6,12 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const versaoSelect = document.getElementById("versao");
 
     const pathSegments = window.location.pathname.split('/').filter(segment => segment.trim() !== '');
-    const vehicleType = pathSegments[pathSegments.length - 2];
-    console.log("Tipo de veículo detectado:", vehicleType);
+    const validTypes = ['carro', 'moto'];
+    const vehicleType = pathSegments.find(segment => validTypes.includes(segment));
 
-    const validTypes = ['carro', 'moto', 'caminhao'];
-    if (!validTypes.includes(vehicleType)) {
-        console.error('Tipo de veículo inválido na URL:', vehicleType);
+    if (!vehicleType) {
+        console.error('Tipo de veículo inválido na URL:', pathSegments.join('/'));
         return;
     }
 

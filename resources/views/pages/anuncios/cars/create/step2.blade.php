@@ -1,6 +1,29 @@
 @extends('static.layoutHome')
 
 @section('main')
+<style>
+        .custom-select {
+            padding: 0.65rem 1rem;
+            border: 1px solid #004E64;
+            border-radius: 0.375rem;
+            color: #004E64;
+            background-color: #f9fcfc;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .custom-select:focus {
+            border-color: #004E64;
+            box-shadow: 0 0 0 0.2rem rgba(0, 78, 100, 0.25);
+        }
+        #btn-localizar {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        #btn-localizar:hover {
+            background-color: #004E64;
+            color: white;
+        }
+    </style>
     <div class="container">
         @include('pages.anuncios.partials.steps', ['step' => 2])
 
@@ -134,34 +157,6 @@
             </div>
         </form>
     </div>
-
-    <style>
-        .custom-select {
-            padding: 0.65rem 1rem;
-            border: 1px solid #004E64;
-            border-radius: 0.375rem;
-            color: #004E64;
-            background-color: #f9fcfc;
-            transition: border-color 0.2s ease-in-out;
-        }
-
-        .custom-select:focus {
-            border-color: #004E64;
-            box-shadow: 0 0 0 0.2rem rgba(0, 78, 100, 0.25);
-        }
-
-@endsection
-
-        #btn-localizar {
-            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-        }
-
-        #btn-localizar:hover {
-            background-color: #004E64;
-            color: white;
-        }
-    </style>
-
     <script>
         const descricao = document.getElementById('descricao');
         const contador = document.getElementById('char-count');

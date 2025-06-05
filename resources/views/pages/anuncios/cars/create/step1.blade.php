@@ -16,34 +16,6 @@
             <form id="form-anuncio" action="{{ route('anuncio.step1Post') }}" method="POST">
                 @csrf
                 <div class="row g-3">
-                    {{-- Título --}}
-                    <div class="col-12">
-                        <label for="titulo" class="form-label">Título do Anúncio*</label>
-                        <input type="text"
-                               class="form-control @error('titulo') is-invalid @enderror"
-                               id="titulo"
-                               name="titulo"
-                               value="{{ old('titulo') }}"
-                               placeholder="Ex.: Volkswagen Golf 2018 1.4 TSI"
-                               required>
-                        @error('titulo')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Descrição --}}
-                    <div class="col-12">
-                        <label for="descricao" class="form-label">Descrição*</label>
-                        <textarea class="form-control @error('descricao') is-invalid @enderror"
-                                  id="descricao"
-                                  name="descricao"
-                                  rows="4"
-                                  placeholder="Detalhe aspectos como estado de conservação, número de proprietários, opcionais, histórico de revisões etc."
-                                  required>{{ old('descricao') }}</textarea>
-                        @error('descricao')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
 
                     {{-- Marca --}}
                     <div class="col-12">
