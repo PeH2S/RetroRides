@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Menu Webmotors</title>
+    <title>Retro Riders</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -178,6 +178,9 @@
         <!-- Filtros -->
         <aside class="lg:col-span-1">
             <form method="GET" action="{{ request()->url() }}">
+                @if(request('q'))
+                    <input type="hidden" name="q" value="{{ request('q') }}">
+                @endif
                 <div class="filter-card">
                     {{-- Tipo de Veículo --}}
                     <div class="mb-6">
@@ -253,7 +256,7 @@
                     <div class="mt-8 border-t border-gray-200 pt-6">
                         <h3 class="text-sm font-semibold text-gray-800 mb-4 tracking-wide">Condição do Veículo</h3>
                         <div class="space-y-3">
-                            @foreach(['Novo', 'Usado'] as $condicao)
+                            @foreach(['Novo', 'Usado', 'Seminovo'] as $condicao)
                                 <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:shadow-sm transition duration-150">
                                     <input type="checkbox" name="condicao[]" value="{{ $condicao }}"
                                         class="form-checkbox h-5 w-5 text-red-600 border-gray-300 rounded"
@@ -402,7 +405,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Slider de distância
     const distanceSlider = document.getElementById('distance');
     if (distanceSlider) {
         noUiSlider.create(distanceSlider, {
@@ -428,7 +430,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500));
     }
 
-    // 2. Filtros de checkbox
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.switch input)');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
@@ -438,7 +439,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 3. Filtros de switch (toggle)
     const switches = document.querySelectorAll('.switch input');
     switches.forEach(switchInput => {
         switchInput.addEventListener('change', function() {
@@ -448,7 +448,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 4. Filtros de ano
     const yearInputs = document.querySelectorAll('input[placeholder="De"], input[placeholder="Até"]');
     yearInputs.forEach(input => {
         input.addEventListener('change', function() {
@@ -458,7 +457,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 5. Ordenação
     const sortSelect = document.getElementById('sort');
     if (sortSelect) {
         sortSelect.addEventListener('change', function() {
@@ -466,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 6. Botão limpar filtros
     const clearFiltersBtn = document.querySelector('button.text-red-500');
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', function() {
@@ -475,12 +472,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Função para atualizar filtros via AJAX
     function updateFilters(newFilters) {
         const url = new URL(window.location.href);
         const searchParams = new URLSearchParams(url.search);
 
-        // Atualizar parâmetros com os novos filtros
+        if(url.searchParams.has('q')){
+            searchParams.set('q', url.searchParams.get('q'));
+        }
+
         for (const [key, value] of Object.entries(newFilters)) {
             if (value !== '' && value !== null && value !== undefined) {
                 searchParams.set(key, value);

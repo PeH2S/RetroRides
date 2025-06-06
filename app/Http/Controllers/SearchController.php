@@ -19,7 +19,16 @@ class SearchController extends Controller
         $longitude = null;
         $raioKm = 100;
 
-        // Filtro de localização e distância
+        if ($request->filled('q')) {
+            $termos = explode('-', Str::slug($request->q));
+            $query->where(function ($q) use ($termos) {
+                foreach ($termos as $termo) {
+                    $q->orWhere('marca', 'like', "%{$termo}%")
+                        ->orWhere('modelo', 'like', "%{$termo}%");
+                }
+            });
+        }
+
         if ($request->filled('localizacao')) {
             [$coords, $radius] = explode('x', $request->localizacao);
             [$latitude, $longitude] = explode(',', $coords);
@@ -31,16 +40,7 @@ class SearchController extends Controller
             $raioKm = $request->input('distance', 100);
         }
 
-        // Filtro de texto
-        if ($request->filled('q')) {
-            $termos = explode('-', Str::slug($request->q));
-            $query->where(function ($q) use ($termos) {
-                foreach ($termos as $termo) {
-                    $q->orWhere('marca', 'like', "%{$termo}%")
-                        ->orWhere('modelo', 'like', "%{$termo}%");
-                }
-            });
-        }
+        
 
         if($request->filled('detalhes')) {
             foreach($request->input('detalhes') as $filtro){
@@ -48,17 +48,20 @@ class SearchController extends Controller
             }
         }
 
+        if($request->filled('situacao')){
+            $query->WhereIn('situacao');
+        }
 
         if ($request->filled('ano_de')) {
             $query->where('ano_modelo', '>=', intval($request->input('ano_de')));
         }
 
         if ($request->filled('ano_ate')) {
-            $query->where('ano_modelo', '>=', intval($request->input('ano_de')));
+            $query->where('ano_modelo', '<=', intval($request->input('ano_de')));
         }
 
 
-        // Ordenação
+        
         switch ($request->input('sort', '')) {
             case 'Menor preço':
                 $query->orderBy('preco', 'asc');
@@ -83,16 +86,6 @@ class SearchController extends Controller
             $longitude = $userLocation['longitude'] ?? null;
         }
 
-        if ($request->filled('q')) {
-            $termos = explode('-', Str::slug($request->q));
-
-            $query->where(function ($q) use ($termos) {
-                foreach ($termos as $termo) {
-                    $q->orWhere('marca', 'like', "%{$termo}%")
-                        ->orWhere('modelo', 'like', "%{$termo}%");
-                }
-            });
-        }
 
         $anuncios = $query->get();
 
@@ -111,7 +104,6 @@ class SearchController extends Controller
                 ->sortBy('distancia');
         }
 
-        // Paginação manual (já que estamos trabalhando com Collection)
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 15;
         $currentItems = $anuncios->slice(($currentPage - 1) * $perPage, $perPage)->values();
@@ -141,9 +133,7 @@ class SearchController extends Controller
         return view('pages.anuncios.cars.search.list', compact('anuncios', 'location'));
     }
 
-    /**
-     * Calcula a distância entre duas coordenadas (em km) usando a fórmula Haversine.
-     */
+
     private function calcularDistancia($lat1, $lon1, $lat2, $lon2)
     {
         $earthRadius = 6371;
