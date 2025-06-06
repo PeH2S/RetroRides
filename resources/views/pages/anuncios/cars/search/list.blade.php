@@ -1,6 +1,30 @@
-@extends('static.layoutHome')
+<!DOCTYPE html>
+<html lang="pt-br">
 
-@section('main')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Menu Webmotors</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ asset('/images/logo.png') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.css" />
+    <!-- Seus estilos locais -->
+    <link rel="stylesheet" href="{{ asset('css/stylesHome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/stylesNavBar.css') }}">
+</head>
+    
+</body>
+</html>
 <style>
     .material-icons {
         font-size: 1.25rem;
@@ -153,126 +177,134 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Filtros -->
         <aside class="lg:col-span-1">
-            <div class="filter-card">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold text-gray-700">Filtros aplicados
-                        <span class="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 ml-1">1</span>
-                    </h2>
-                    <button class="text-sm text-red-500 hover:text-red-700 font-medium">Limpar todos</button>
-                </div>
-
-                <div class="bg-gray-100 p-2 rounded-md flex items-center justify-between text-sm text-gray-700 mb-6">
-                    <span>São Paulo - SP</span>
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <span class="material-icons text-base">close</span>
-                    </button>
-                </div>
-
-                <div class="mb-6">
-                    <div class="flex border border-gray-300 rounded-md">
-                        <button class="flex-1 py-2 px-4 text-sm font-medium text-gray-700 bg-white rounded-l-md border-r border-gray-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:z-10">
-                            <span class="material-icons mr-1 text-lg">directions_car</span> Carros
-                        </button>
-                        <button class="flex-1 py-2 px-4 text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-r-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:z-10">
-                            <span class="material-icons mr-1 text-lg">two_wheeler</span> Motos
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="location">Localização</label>
-                    <div class="relative">
-                        <input class="input-text w-full pr-10" id="location" name="location" type="text" value="São Paulo - SP"/>
-                        <span class="material-icons absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">close</span>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="distance">Alcance da busca</label>
-                    <div class="flex justify-between text-sm text-gray-500 mb-2">
-                        <span>0 Km</span>
-                        <span class="text-red-500 font-medium">100 Km</span>
-                        <span>500 Km</span>
-                    </div>
-                    <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500" id="distance" max="500" min="0" name="distance" type="range" value="100"/>
-                </div>
-
-                <div>
-                    <h3 class="text-sm font-medium text-gray-700 mb-3">O que é interessante para você?</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <label class="text-sm text-gray-600" for="inspected">Vistoriado</label>
-                                <p class="text-xs text-gray-400">Seminovos com laudo de vistoria</p>
-                            </div>
-                            <label class="switch">
-                                <input id="inspected" type="checkbox"/>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <label class="text-sm text-gray-600" for="360view">Visão 360°</label>
-                                <p class="text-xs text-gray-400">Explore cada detalhe do veículo</p>
-                            </div>
-                            <label class="switch">
-                                <input id="360view" type="checkbox"/>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <label class="text-sm text-gray-600" for="super-price">Super Preço</label>
-                                <p class="text-xs text-gray-400">Veículos com preço abaixo da média</p>
-                            </div>
-                            <label class="switch">
-                                <input checked id="super-price" type="checkbox"/>
-                                <span class="slider"></span>
-                            </label>
+            <form method="GET" action="{{ request()->url() }}">
+                <div class="filter-card">
+                    {{-- Tipo de Veículo --}}
+                    <div class="mb-6">
+                        <div class="flex border border-gray-300 rounded-md">
+                            <button type="submit" name="tipo" value="carro"
+                                class="flex-1 py-2 px-4 text-sm font-medium {{ request('tipo') === 'carro' ? 'text-white bg-red-500' : 'text-gray-700 bg-white' }} rounded-l-md border-r border-gray-300 flex items-center justify-center">
+                                <span class="material-icons mr-1 text-lg">directions_car</span> Carros
+                            </button>
+                            <button type="submit" name="tipo" value="moto"
+                                class="flex-1 py-2 px-4 text-sm font-medium {{ request('tipo') === 'moto' ? 'text-white bg-red-500' : 'text-gray-500 hover:bg-gray-50' }} rounded-r-md flex items-center justify-center">
+                                <span class="material-icons mr-1 text-lg">two_wheeler</span> Motos
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <div class="mt-8 border-t pt-6">
-                    <h3 class="text-sm font-medium text-gray-700 mb-3">Condição do Veículo</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input class="form-checkbox h-4 w-4 text-red-500 border-gray-300 rounded focus:ring-red-400" type="checkbox"/>
-                            <span class="text-sm text-gray-600">Novo</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input class="form-checkbox h-4 w-4 text-red-500 border-gray-300 rounded focus:ring-red-400" type="checkbox"/>
-                            <span class="text-sm text-gray-600">Usado</span>
-                        </label>
+                    {{-- Localização --}}
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="location">Localização</label>
+                        <div class="relative">
+                            <input class="input-text w-full pr-10" id="location" name="location" type="text" value="{{ request('location') }}" />
+                            <button type="submit" name="location" value="" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" title="Limpar localização" style="background:none; border:none; cursor:pointer;">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mt-6 border-t pt-6">
-                    <h3 class="text-sm font-medium text-gray-700 mb-3">Ano</h3>
-                    <div class="flex space-x-2">
-                        <input class="input-text w-1/2 text-sm" placeholder="De" type="number"/>
-                        <input class="input-text w-1/2 text-sm" placeholder="Até" type="number"/>
+                    {{-- Alcance --}}
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="distance">Alcance da busca</label>
+                        <div class="flex justify-between text-sm text-gray-500 mb-2">
+                            <span>0 Km</span>
+                            <span class="text-red-500 font-medium">{{ request('distance', 100) }} Km</span>
+                            <span>500 Km</span>
+                        </div>
+                        <input class="w-full h-2 bg-gray-200 rounded-lg accent-red-500" id="distance" max="500" min="0" name="distance" type="range" value="{{ request('distance', 100) }}" />
                     </div>
-                </div>
 
-                <button class="w-full btn-primary mt-8">Ver Ofertas</button>
-            </div>
+                    {{-- Detalhes adicionais --}}
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">O que é interessante para você?</h3>
+                        <div class="space-y-3">
+                            @php
+                                $detalhes = request('detalhes', []);
+                                function isChecked($val) {
+                                    return in_array($val, request('detalhes', []));
+                                }
+                            @endphp
+                            @foreach([
+                                'Único Dono' => 'Somente um único Dono',
+                                'IPVA Pago' => 'IPVA em dia',
+                                'Não Aceito Troca' => 'Veículos somente venda',
+                                'Licenciado' => 'Veículos Licenciados',
+                                'Veículo de Colecionador' => 'Modelo de Colecionador',
+                                'Todas as revisões em concessionária' => 'Veículo com a revisão em dia',
+                                'Adaptado para pessoas com deficiência' => 'Veículo adaptado',
+                            ] as $key => $desc)
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="text-sm text-gray-600" for="{{ Str::slug($key) }}">{{ $key }}</label>
+                                        <p class="text-xs text-gray-400">{{ $desc }}</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input id="{{ Str::slug($key) }}" type="checkbox" name="detalhes[]"
+                                            value="{{ $key }}" {{ isChecked($key) ? 'checked' : '' }} />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Condição do veículo --}}
+                    <div class="mt-8 border-t border-gray-200 pt-6">
+                        <h3 class="text-sm font-semibold text-gray-800 mb-4 tracking-wide">Condição do Veículo</h3>
+                        <div class="space-y-3">
+                            @foreach(['Novo', 'Usado'] as $condicao)
+                                <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:shadow-sm transition duration-150">
+                                    <input type="checkbox" name="condicao[]" value="{{ $condicao }}"
+                                        class="form-checkbox h-5 w-5 text-red-600 border-gray-300 rounded"
+                                        {{ in_array($condicao, request('condicao', [])) ? 'checked' : '' }} />
+                                    <span class="text-sm text-gray-700">{{ $condicao }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Ano de modelo --}}
+                    <div class="mt-6 border-t pt-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">Ano</h3>
+                        <div class="flex space-x-2">
+                            <input class="input-text w-1/2 text-sm" name="ano_de" placeholder="De" type="number" value="{{ request('ano_de') }}" />
+                            <input class="input-text w-1/2 text-sm" name="ano_ate" placeholder="Até" type="number" value="{{ request('ano_ate') }}" />
+                        </div>
+                    </div>
+
+                    {{-- Botão --}}
+                    <button type="submit" class="w-full btn-primary mt-8">Aplicar Filtros</button>
+                </div>
+            </form>
         </aside>
 
         <!-- Lista de Anúncios -->
         <main class="lg:col-span-3">
             <div class="flex justify-between items-center mb-6">
                 <p class="text-sm text-gray-600">{{ $anuncios->total() }} anúncios encontrados</p>
-                <div class="flex items-center">
+                <form method="GET" action="{{ request()->url() }}" id="sortForm" class="flex items-center">
+                    {{-- Mantém os filtros atuais como hidden inputs --}}
+                    @foreach(request()->except('sort') as $key => $value)
+                        @if(is_array($value))
+                            @foreach($value as $v)
+                                <input type="hidden" name="{{ $key }}[]" value="{{ $v }}">
+                            @endforeach
+                        @else
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endif
+                    @endforeach
+
                     <label class="text-sm text-gray-600 mr-2" for="sort">Ordenar Por:</label>
-                    <select class="input-text text-sm py-1.5" id="sort" name="sort">
-                        <option>Mais relevantes</option>
-                        <option>Menor preço</option>
-                        <option>Maior preço</option>
-                        <option>Mais novos</option>
+                    <select class="input-text text-sm py-1.5" id="sort" name="sort" onchange="document.getElementById('sortForm').submit()">
+                        <option value="" {{ request('sort') == '' ? 'selected' : '' }}>Mais relevantes</option>
+                        <option value="Menor preço" {{ request('sort') == 'Menor preço' ? 'selected' : '' }}>Menor preço</option>
+                        <option value="Maior preço" {{ request('sort') == 'Maior preço' ? 'selected' : '' }}>Maior preço</option>
+                        <option value="Mais novos" {{ request('sort') == 'Mais novos' ? 'selected' : '' }}>Mais novos</option>
                     </select>
-                </div>
+                </form>
             </div>
+
 
             @if ($anuncios->isEmpty())
                 <div class="bg-white rounded-lg shadow p-6 text-center">
@@ -363,4 +395,132 @@
         </main>
     </div>
 </div>
-@endsection
+<!-- noUiSlider JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.js"></script>
+<!-- Lodash para debounce -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Slider de distância
+    const distanceSlider = document.getElementById('distance');
+    if (distanceSlider) {
+        noUiSlider.create(distanceSlider, {
+            start: [100],
+            connect: [true, false],
+            range: {
+                'min': 0,
+                'max': 500
+            },
+            step: 10,
+            format: {
+                to: function(value) {
+                    return Math.round(value);
+                },
+                from: function(value) {
+                    return Number(value);
+                }
+            }
+        });
+
+        distanceSlider.noUiSlider.on('update', _.debounce(function(values) {
+            updateFilters({ distance: values[0] });
+        }, 500));
+    }
+
+    // 2. Filtros de checkbox
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.switch input)');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const filterName = this.id || this.name;
+            const filterValue = this.checked;
+            updateFilters({ [filterName]: filterValue });
+        });
+    });
+
+    // 3. Filtros de switch (toggle)
+    const switches = document.querySelectorAll('.switch input');
+    switches.forEach(switchInput => {
+        switchInput.addEventListener('change', function() {
+            const filterName = this.id;
+            const filterValue = this.checked;
+            updateFilters({ [filterName]: filterValue });
+        });
+    });
+
+    // 4. Filtros de ano
+    const yearInputs = document.querySelectorAll('input[placeholder="De"], input[placeholder="Até"]');
+    yearInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const yearFrom = document.querySelector('input[placeholder="De"]').value;
+            const yearTo = document.querySelector('input[placeholder="Até"]').value;
+            updateFilters({ year_from: yearFrom, year_to: yearTo });
+        });
+    });
+
+    // 5. Ordenação
+    const sortSelect = document.getElementById('sort');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            updateFilters({ sort: this.value });
+        });
+    }
+
+    // 6. Botão limpar filtros
+    const clearFiltersBtn = document.querySelector('button.text-red-500');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            // Resetar todos os filtros
+            window.location.href = window.location.pathname;
+        });
+    }
+
+    // Função para atualizar filtros via AJAX
+    function updateFilters(newFilters) {
+        const url = new URL(window.location.href);
+        const searchParams = new URLSearchParams(url.search);
+
+        // Atualizar parâmetros com os novos filtros
+        for (const [key, value] of Object.entries(newFilters)) {
+            if (value !== '' && value !== null && value !== undefined) {
+                searchParams.set(key, value);
+            } else {
+                searchParams.delete(key);
+            }
+        }
+
+        // Fazer requisição AJAX
+        fetch(`${url.pathname}?${searchParams.toString()}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+
+            const newList = newDoc.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.xl\\:grid-cols-3.gap-6');
+            const newPagination = newDoc.querySelector('.mt-10.flex.justify-center.items-center.space-x-2');
+
+            if (newList) {
+                document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.xl\\:grid-cols-3.gap-6').innerHTML = newList.innerHTML;
+            }
+
+            if (newPagination) {
+                document.querySelector('.mt-10.flex.justify-center.items-center.space-x-2').innerHTML = newPagination.innerHTML;
+            }
+
+            const resultCount = newDoc.querySelector('.text-sm.text-gray-600');
+            if (resultCount) {
+                document.querySelector('.text-sm.text-gray-600').textContent = resultCount.textContent;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+</script>
+
+</body>
+
+</html>
