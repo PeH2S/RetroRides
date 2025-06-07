@@ -7,9 +7,18 @@ use App\Models\Anuncio;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
+use App\Services\NominatimService;
 
 class SearchController extends Controller
 {
+
+    protected $nominatim;
+
+    public function __construct(NominatimService $nominatim)
+    {
+        $this->nominatim = $nominatim;
+    }
+
 
     public function index(Request $request)
     {
@@ -17,7 +26,12 @@ class SearchController extends Controller
 
         $latitude = null;
         $longitude = null;
-        $raioKm = 100;
+        $raioKm = $request->input('distance', 100);
+        $location = [
+            'cidade' => '',
+            'estado' => '',
+            'user_provided' => false
+        ];
 
         if ($request->filled('q')) {
             $termos = explode('-', Str::slug($request->q));
@@ -28,28 +42,49 @@ class SearchController extends Controller
                 }
             });
         }
+        if ($request->filled('location')) {
+            $cityData = $this->nominatim->geocodeCity($request->input('location'));
 
-        if ($request->filled('localizacao')) {
+            if ($cityData) {
+                $latitude = $cityData['lat'];
+                $longitude = $cityData['lng'];
+                $location['cidade'] = $cityData['cidade'];
+                $location['estado'] = $cityData['estado'];
+                $location['user_provided'] = true;
+
+                Session::put('user_location', [
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'cidade' => $cityData['cidade'],
+                    'estado' => $cityData['estado'],
+                ]);
+            }
+        }
+
+        if (!$latitude && $request->filled('localizacao')) {
             [$coords, $radius] = explode('x', $request->localizacao);
             [$latitude, $longitude] = explode(',', $coords);
             $raioKm = floatval($radius);
-        } elseif (Session::has('user_location')) {
+        } elseif (!$latitude && Session::has('user_location')) {
             $userLocation = Session::get('user_location');
             $latitude = $userLocation['latitude'] ?? null;
             $longitude = $userLocation['longitude'] ?? null;
             $raioKm = $request->input('distance', 100);
         }
 
-        
 
-        if($request->filled('detalhes')) {
-            foreach($request->input('detalhes') as $filtro){
-                $query->where('detalhes', 'LIKE', '%' .$filtro. '%');
+
+
+        if ($request->filled('detalhes')) {
+            foreach ($request->input('detalhes') as $filtro) {
+                $query->where('detalhes', 'LIKE', '%' . $filtro . '%');
             }
         }
 
-        if($request->filled('situacao')){
-            $query->WhereIn('situacao');
+        if ($request->filled('condicao')) {
+            $query->WhereIn('situacao', $request->condicao);
+        } else {
+            $query->whereIn('situacao', ['Usado', 'Novo', 'Seminovo']);
         }
 
         if ($request->filled('ano_de')) {
@@ -57,11 +92,11 @@ class SearchController extends Controller
         }
 
         if ($request->filled('ano_ate')) {
-            $query->where('ano_modelo', '<=', intval($request->input('ano_de')));
+            $query->where('ano_modelo', '<=', intval($request->input('ano_ate')));
         }
 
 
-        
+
         switch ($request->input('sort', '')) {
             case 'Menor preço':
                 $query->orderBy('preco', 'asc');
@@ -74,16 +109,6 @@ class SearchController extends Controller
                 break;
             default:
                 break;
-        }
-
-        if ($request->filled('localizacao')) {
-            [$coords, $radius] = explode('x', $request->localizacao);
-            [$latitude, $longitude] = explode(',', $coords);
-            $raioKm = floatval($radius);
-        } elseif (Session::has('user_location')) {
-            $userLocation = Session::get('user_location');
-            $latitude = $userLocation['latitude'] ?? null;
-            $longitude = $userLocation['longitude'] ?? null;
         }
 
 
@@ -116,10 +141,7 @@ class SearchController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        $location = [
-            'cidade' => '',
-            'estado' => ''
-        ];
+
         if (Session::has('user_location')) {
             $userLocation = Session::get('user_location');
             if (isset($userLocation['cidade'], $userLocation['estado'])) {

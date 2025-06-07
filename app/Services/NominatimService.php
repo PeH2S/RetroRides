@@ -38,4 +38,32 @@ class NominatimService
             return null;
         }
     }
+    public function geocodeCity(string $city): ?array
+    {
+        try {
+            $response = $this->client->get('search', [
+                'query' => [
+                    'format' => 'json',
+                    'q' => $city,
+                    'limit' => 1,
+                    'addressdetails' => 1,
+                ]
+            ]);
+
+            $results = json_decode($response->getBody(), true);
+
+            if (!empty($results[0])) {
+                return [
+                    'lat' => $results[0]['lat'],
+                    'lng' => $results[0]['lon'],
+                    'cidade' => $results[0]['address']['city'] ?? $results[0]['address']['town'] ?? '',
+                    'estado' => $results[0]['address']['state'] ?? '',
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error("City geocoding failed: " . $e->getMessage());
+        }
+
+        return null;
+    }
 }

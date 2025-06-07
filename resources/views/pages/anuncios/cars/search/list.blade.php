@@ -200,11 +200,22 @@
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="location">Localização</label>
                         <div class="relative">
-                            <input class="input-text w-full pr-10" id="location" name="location" type="text" value="{{ request('location') }}" />
-                            <button type="submit" name="location" value="" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" title="Limpar localização" style="background:none; border:none; cursor:pointer;">
-                                <span class="material-icons">close</span>
-                            </button>
+                            <input class="input-text w-full pr-10" id="location" name="location" type="text" 
+                                value="{{ request('location') ?: (isset($location['cidade']) ? $location['cidade'].', '.$location['estado'] : '') }}" 
+                                placeholder="Digite uma cidade ou endereço" />
+                            @if(request('location') || !isset($location['cidade']))
+                                <button type="submit" name="location" value="" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" title="Limpar localização" style="background:none; border:none; cursor:pointer;">
+                                    <span class="material-icons">close</span>
+                                </button>
+                            @else
+                                <button type="button" onclick="this.form.location.value=''; this.form.submit();" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" title="Usar minha localização atual" style="background:none; border:none; cursor:pointer;">
+                                    <span class="material-icons">my_location</span>
+                                </button>
+                            @endif
                         </div>
+                        @if(!request('location') && isset($location['cidade']))
+                            <p class="text-xs text-gray-500 mt-1">Mostrando resultados próximos a {{ $location['cidade'] }}, {{ $location['estado'] }}</p>
+                        @endif
                     </div>
 
                     {{-- Alcance --}}
