@@ -17,15 +17,11 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.css" />
+
     <!-- Seus estilos locais -->
     <link rel="stylesheet" href="{{ asset('css/stylesHome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesNavBar.css') }}">
-</head>
-    
-</body>
-</html>
-<style>
+    <style>
     .material-icons {
         font-size: 1.25rem;
         vertical-align: middle;
@@ -43,7 +39,7 @@
         padding: 1.5rem;
     }
     .btn-primary {
-        background-color: #ef4444;
+        background-color: #013746;
         color: white;
         border-radius: 0.375rem;
         padding: 0.75rem 1.5rem;
@@ -101,7 +97,7 @@
         border-radius: 50%;
     }
     input:checked + .slider {
-        background-color: #ef4444;
+        background-color: #013746;
     }
     input:checked + .slider:before {
         transform: translateX(1.5rem);
@@ -161,7 +157,16 @@
     }
 </style>
 
-<div class="container mx-auto px-4 py-8">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-expand-lg " style="margin-bottom: 5em;">
+        <div class="w-100">
+            @include('static.navBar_Header')
+        </div>
+    </nav>
+    <div class="container mx-auto px-4 py-8">
     <nav class="mb-6 text-sm">
         <a class="breadcrumb-link" href="#">Home</a>
         <span class="mx-1 text-gray-400">/</span>
@@ -186,11 +191,11 @@
                     <div class="mb-6">
                         <div class="flex border border-gray-300 rounded-md">
                             <button type="submit" name="tipo" value="carro"
-                                class="flex-1 py-2 px-4 text-sm font-medium {{ request('tipo') === 'carro' ? 'text-white bg-red-500' : 'text-gray-700 bg-white' }} rounded-l-md border-r border-gray-300 flex items-center justify-center">
+                                class="flex-1 py-2 px-4 text-sm font-medium {{ request('tipo') === 'carro' ? 'text-white' : 'text-gray-700 bg-white' }} rounded-l-md border-r border-gray-300 flex items-center justify-center" style="background-color: #013746;">
                                 <span class="material-icons mr-1 text-lg">directions_car</span> Carros
                             </button>
                             <button type="submit" name="tipo" value="moto"
-                                class="flex-1 py-2 px-4 text-sm font-medium {{ request('tipo') === 'moto' ? 'text-white bg-red-500' : 'text-gray-500 hover:bg-gray-50' }} rounded-r-md flex items-center justify-center">
+                                class="flex-1 py-2 px-4 text-sm font-medium {{ request('tipo') === 'moto' ? 'text-white' : 'text-gray-500 hover:bg-gray-50' }} rounded-r-md flex items-center justify-center" style="background-color:#013746;">
                                 <span class="material-icons mr-1 text-lg">two_wheeler</span> Motos
                             </button>
                         </div>
@@ -223,7 +228,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="distance">Alcance da busca</label>
                         <div class="flex justify-between text-sm text-gray-500 mb-2">
                             <span>0 Km</span>
-                            <span class="text-red-500 font-medium">{{ request('distance', 100) }} Km</span>
+                            <span class="font-medium">{{ request('distance', 100) }} Km</span>
                             <span>500 Km</span>
                         </div>
                         <input class="w-full h-2 bg-gray-200 rounded-lg accent-red-500" id="distance" max="500" min="0" name="distance" type="range" value="{{ request('distance', 100) }}" />
@@ -270,7 +275,7 @@
                             @foreach(['Novo', 'Usado', 'Seminovo'] as $condicao)
                                 <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:shadow-sm transition duration-150">
                                     <input type="checkbox" name="condicao[]" value="{{ $condicao }}"
-                                        class="form-checkbox h-5 w-5 text-red-600 border-gray-300 rounded"
+                                        class="form-checkbox h-5 w-5  border-gray-300 rounded"
                                         {{ in_array($condicao, request('condicao', [])) ? 'checked' : '' }} />
                                     <span class="text-sm text-gray-700">{{ $condicao }}</span>
                                 </label>
@@ -333,23 +338,17 @@
                                      class="w-full h-48 object-cover"
                                      src="{{ $anuncio->imagem ?? 'https://via.placeholder.com/300x180?text=Veiculo' }}"/>
 
-                                @if($anuncio->patrocinado)
-                                    <span class="absolute top-2 left-2 sponsored-tag">Patrocinado</span>
-                                @endif
 
                                 <div class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">1/{{ $anuncio->fotos_count ?? 8 }}</div>
 
                                 <button class="favorite-icon">
-                                    <span class="material-icons {{ $anuncio->favorito ? 'text-red-500' : 'text-gray-400' }}">
+                                    <span class="material-icons {{ $anuncio->favorito ? 'text-gray-500' : 'text-gray-400' }}">
                                         {{ $anuncio->favorito ? 'favorite' : 'favorite_border' }}
                                     </span>
                                 </button>
                             </div>
 
                             <div class="p-4">
-                                @if($anuncio->oferta_especial)
-                                    <img alt="Oferta especial" class="h-5 mb-1" src="https://via.placeholder.com/100x20?text=Oferta"/>
-                                @endif
 
                                 <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ strtoupper($anuncio->marca) }} {{ $anuncio->modelo }}</h3>
                                 <p class="text-sm text-gray-600 mb-1">{{ $anuncio->versao }}</p>
@@ -358,10 +357,11 @@
                                     {{ $anuncio->quilometragem ? number_format($anuncio->quilometragem, 0, ',', '.') . ' Km' : '0 Km' }}
                                 </p>
 
-                                @if(isset($anuncio->distance))
+
+                                @if(isset($anuncio->localizacao))
                                     <p class="text-xs text-gray-500 mb-3 flex items-center">
                                         <span class="material-icons text-sm mr-1">location_on</span>
-                                        Distância: {{ round($anuncio->distance, 1) }} km
+                                        {{$anuncio->localizacao}}
                                     </p>
                                 @endif
 
@@ -389,7 +389,7 @@
 
                     @foreach ($anuncios->getUrlRange(1, $anuncios->lastPage()) as $page => $url)
                         @if ($page == $anuncios->currentPage())
-                            <span class="px-4 py-2 text-sm font-medium rounded-md bg-red-500 text-white">{{ $page }}</span>
+                            <span class="px-4 py-2 text-sm font-medium rounded-md text-white" style="background-color: #013746;">{{ $page }}</span>
                         @else
                             <a href="{{ $url }}" class="px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-200 text-gray-700">{{ $page }}</a>
                         @endif
@@ -410,7 +410,67 @@
     </div>
 </div>
 <!-- noUiSlider JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.js"></script>
+
+
+    
+
+
+    <!-- Rodapé -->
+    @include('static.footer')
+
+    <script>
+        const isSearchPage = window.location.pathname.includes('/search');
+
+        async function handleLocation(position) {
+            const {
+                latitude,
+                longitude
+            } = position.coords;
+
+            try {
+                const response = await fetch('/definir-localizacao', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        latitude,
+                        longitude
+                    })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                const data = await response.json();
+
+                if (isSearchPage) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('localizacao', `${latitude},${longitude}x100km`);
+                    url.searchParams.set('estadocidade', `${data.estado}-${data.cidade}`);
+                    window.location.assign(url.toString());
+                }
+            } catch (e) {
+                console.error('Falha ao processar localização:', e);
+                alert('Falha ao processar localização');
+            }
+        }
+
+        if (navigator.geolocation && !sessionStorage.getItem('locationSent')) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    sessionStorage.setItem('locationSent', 'true');
+                    handleLocation(position);
+                },
+                error => {
+                    console.warn('Permissão negada ou erro ao obter localização:', error);
+                    sessionStorage.setItem('locationSent', 'true');
+                }
+            );
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.js"></script>
 <!-- Lodash para debounce -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
 
@@ -475,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const clearFiltersBtn = document.querySelector('button.text-red-500');
+    const clearFiltersBtn = document.querySelector('button.text-grey-500');
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', function() {
             // Resetar todos os filtros
@@ -531,6 +591,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
+
+   
 </body>
 
 </html>
+
+
+
+
+
