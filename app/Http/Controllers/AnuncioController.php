@@ -26,6 +26,23 @@ class AnuncioController extends Controller
         return view('pages.anuncios.meus', compact('meusAnuncios'));
     }
 
+     public function selectType()
+    {
+        return view('pages.anuncios.opcao');
+    }
+
+     public function step1Car()
+    {
+        session(['anuncio.tipo_veiculo' => 'carro']);
+        return view('pages.anuncios.cars.create.step1');
+    }
+
+    public function step1Moto()
+    {
+        session(['anuncio.tipo_veiculo' => 'moto']);
+        return view('pages.anuncios.motos.create.step1');
+    }
+
     public function step1()
     {
         return view('pages.anuncios.cars.create.step1');
@@ -53,10 +70,19 @@ class AnuncioController extends Controller
         }
 
         $dados = session('anuncio.step1');
-        $detalhes = $this->carApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo']);
+        $tipoVeiculo = session('anunciar', 'carro');
+        if($tipoVeiculo === 'carro'){
+             $detalhes = $this->carApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo']);
         $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
+        } else{
+            //mudar para busca api por moto
+            $detalhes = $this->carApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo']);
+        $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
+        }   
 
-        return view('pages.anuncios.cars.create.step2', compact('precoFipe'));
+       
+
+        return view("pages.anuncios.{$tipoVeiculo}.create.step2", compact('precoFipe'));
     }
 
     public function step2Post(Request $request)
@@ -155,14 +181,27 @@ class AnuncioController extends Controller
             return redirect()->route('anuncio.step4')->with('error', 'Adicione pelo menos uma foto do veículo.');
         }
 
-        $detalhes = $this->carApi->getVehicleDetails(
-            session('anuncio.step1.marca'),
-            session('anuncio.step1.modelo'),
-            session('anuncio.step1.ano_modelo')
-        );
+
+        $tipoVeiculo = session('anunciar', 'carro');
+
+        if($tipoVeiculo === 'carro'){
+            $detalhes = $this->carApi->getVehicleDetails(
+                session('anuncio.step1.marca'),
+                session('anuncio.step1.modelo'),
+                session('anuncio.step1.ano_modelo')
+            );
+        }else{
+            $detalhes = [
+                'brand' => session('anuncio.step.marca'),
+                'model' => session('anuncio.step1.modelo')
+            ];
+        }
+
+
 
         $anuncio = Anuncio::create([
             'user_id' => auth()->id(),
+            'tipo_veiculo' => $tipoVeiculo,
             'marca' => $detalhes['brand'] ?? session('anuncio.step1.marca'),
             'modelo' => $detalhes['model'] ?? session('anuncio.step1.modelo'),
             'ano_modelo' => session('anuncio.step1.ano_modelo'),
@@ -176,7 +215,7 @@ class AnuncioController extends Controller
             'cidade' => session('anuncio.step2.cidade'),
             'estado' => session('anuncio.step2.estado'),
             'quilometragem' => session('anuncio.step2.quilometragem'),
-            'portas' => session('anuncio.step2.portas'),
+            'portas' => $tipoVeiculo === 'carro' ? session('anuncio.step2.portas') : null,
             'placa' => session('anuncio.step2.placa'),
             'descricao' => session('anuncio.step2.descricao'),
             'situacao' => session('anuncio.step2.situacao'),
