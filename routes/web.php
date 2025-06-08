@@ -96,7 +96,9 @@ Route::middleware('auth')->group(function () {
     return view('pages.anuncios.opcao');
     })->name('anunciar');
 
-
+    //Rota "anunciar-moto" (etapa 2)
+    Route::get('/anunciar/moto', [AnuncioController::class, 'step1'])
+          ->name('anunciar-moto');
 
     // Rota “anunciar-carros” (etapa 1)
     Route::get('/anunciar/carro', [AnuncioController::class, 'step1'])

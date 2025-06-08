@@ -42,7 +42,7 @@
     <h2 class="mb-5 text-center" style="color: #004E64;">Qual automóvel você deseja vender?</h2>
     <div class="row w-100" style="max-width: 600px;">
         <div class="col-6 d-flex justify-content-center align-items-center p-2">
-            <a href="{{ route('anuncio.step1') }}" class="card-link">
+            <a href="{{ route('anuncio-carros') }}" class="card-link">
                 <div class="card-option w-100 d-flex justify-content-center align-items-center">
                     <div class="card-option-text">Carro</div>
                     <img src="{{ url('images/car.png') }}" alt="Ícone de carro">
@@ -50,7 +50,7 @@
             </a>
         </div>
         <div class="col-6 d-flex justify-content-center align-items-center p-2">
-            <a href="{{ route('anunciar-carros') }}" class="card-link">
+            <a href="{{ route('anunciar-motos') }}" class="card-link">
                 <div class="card-option w-100 d-flex justify-content-center align-items-center">
                     <div class="card-option-text">Moto</div>
                     <img src="{{ url('images/capacete.png') }}" alt="Ícone de moto">
