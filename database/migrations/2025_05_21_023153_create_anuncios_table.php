@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('ano_fabricacao');
             $table->string('cor');
             $table->string('combustivel');
-            $table->integer('portas');
+            $table->integer('portas')->nullable();
             $table->string('placa')->nullable();
             $table->string('situacao');
             $table->string('localizacao');
@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('cidade')->nullable();
             $table->string('estado')->nullable();
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->enum('tipo_veiculo', ['carro', 'moto']);
             $table->timestamps();
         });
     }

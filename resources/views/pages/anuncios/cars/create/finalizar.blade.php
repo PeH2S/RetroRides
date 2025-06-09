@@ -1,4 +1,3 @@
-{{-- resources/views/pages/anuncios/cars/confirm.blade.php --}}
 @extends('static.layoutHome')
 
 @section('main')
@@ -50,7 +49,7 @@
 
     {{-- Botões Voltar / Confirmar --}}
     <div class="d-flex justify-content-between mb-5">
-        <a href="{{ route('anuncio.step4') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('anuncio.step4', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-outline-secondary">
             &larr; Voltar
         </a>
 

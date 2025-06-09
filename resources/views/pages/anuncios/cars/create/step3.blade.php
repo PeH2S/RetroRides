@@ -8,7 +8,7 @@
         Selecione os itens que representam detalhes adicionais do seu veículo para despertar a atenção dos compradores.
     </p>
 
-    <form action="{{ route('anuncio.step3') }}" method="POST">
+    <form action="{{ route('anuncio.step3',  ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" method="POST">
         @csrf
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
@@ -21,7 +21,7 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
-            <a href="{{ route('anuncio.step2') }}" class="btn btn-link text-decoration-none">
+            <a href="{{ route('anuncio.step2', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-link text-decoration-none">
                 &larr; <strong>Voltar</strong>
             </a>
             <button type="submit" class="btn btn-dark px-4 py-2">

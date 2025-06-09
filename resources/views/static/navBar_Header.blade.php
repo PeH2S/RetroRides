@@ -16,9 +16,9 @@
 
         <!-- Comprar -->
         <li class="nav-item dropdown position-static">
-          <a class="nav-link dropdown-toggle" href="#" id="comprarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="nav-link dropdown-toggle" id="comprarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Comprar
-          </a>
+          </span>
           <div class="dropdown-menu w-100 animate__animated animate__fadeIn" aria-labelledby="comprarDropdown">
             <div class="container py-3">
               <div class="row text-center justify-content-center">

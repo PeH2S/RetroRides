@@ -13,7 +13,7 @@
             <h4 class="text-center mb-4">Preencha os dados do veículo</h4>
 
             {{-- OBS: O action aqui deve apontar para o POST da etapa 1 --}}
-            <form id="form-anuncio" action="{{ route('anuncio.step1Post') }}" method="POST">
+            <form id="form-anuncio" action="{{ route('anuncio.step1Post', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" method="POST">
                 @csrf
                 <div class="row g-3">
 
@@ -107,18 +107,7 @@
                         @error('cor')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                    </div>
-
-                    {{-- Blindado --}}
-                    <div class="col-12">
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   id="blindado"
-                                   name="blindado">
-                            <label class="form-check-label" for="blindado">Blindado</label>
-                        </div>
-                    </div>
+                </div>
 
                     {{-- Aviso de revisão --}}
                     <div class="alert alert-warning mt-3">

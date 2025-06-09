@@ -54,7 +54,8 @@ class AnuncioSeeder extends Seeder
             $preco = $this->gerarPreco($modelo, $anoFabricacao, $quilometragem);
 
             Anuncio::create([
-                'user_id' => $faker->randomElement($users)->id, // Associando a um dos usuários criados
+                'user_id' => $faker->randomElement($users)->id,
+                'tipo_veiculo' => $faker->randomElement(['carro', 'moto']),
                 'marca' => $veiculo['marca'],
                 'modelo' => $modelo,
                 'ano_modelo' => $anoModelo,

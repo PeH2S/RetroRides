@@ -1,4 +1,3 @@
-{{-- resources/views/pages/anuncios/cars/confirm.blade.php --}}
 @extends('static.layoutHome')
 
 @section('main')
@@ -14,6 +13,7 @@
 
     {{-- Dados do veículo e detalhes --}}
     <div class="card mb-4 shadow-sm">
+        <h2>Finalizar Anúncio - {{ ucfirst($tipoVeiculo) }}</h2>
         <div class="card-body">
             <p class="card-text">{{ $dados['descricao'] }}</p>
             <ul class="list-group list-group-flush">
@@ -26,7 +26,6 @@
                 <li class="list-group-item"><strong>Preço:</strong> R$ {{ number_format($dados['preco'], 2, ',', '.') }}</li>
                 <li class="list-group-item"><strong>Localização:</strong> {{ $dados['localizacao'] }}</li>
                 <li class="list-group-item"><strong>Quilometragem:</strong> {{ number_format($dados['quilometragem'], 0, ',', '.') }} km</li>
-                <li class="list-group-item"><strong>Portas:</strong> {{ $dados['portas'] }}</li>
                 <li class="list-group-item"><strong>Placa:</strong> {{ $dados['placa'] }}</li>
                 <li class="list-group-item"><strong>Situação:</strong> {{ ucfirst($dados['situacao']) }}</li>
                 <li class="list-group-item"><strong>Condições:</strong> {{ implode(', ', $dados['condicoes'] ?? []) ?: '–' }}</li>
@@ -50,7 +49,7 @@
 
     {{-- Botões Voltar / Confirmar --}}
     <div class="d-flex justify-content-between mb-5">
-        <a href="{{ route('anuncio.step4') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('anuncio.step4', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-outline-secondary">
             &larr; Voltar
         </a>
 

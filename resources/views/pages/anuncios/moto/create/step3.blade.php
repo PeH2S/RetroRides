@@ -8,11 +8,11 @@
         Selecione os itens que representam detalhes adicionais do seu veículo para despertar a atenção dos compradores.
     </p>
 
-    <form action="{{ route('anuncio.step3') }}" method="POST">
+    <form action="{{ route('anuncio.step3',  ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" method="POST">
         @csrf
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
-            @foreach(['Único Dono', 'IPVA Pago', 'Não aceito troca', 'Veículo financiado', 'Licenciado', 'Garantia de Fábrica', 'Veículo de Colecionador', 'Todas as revisões em concessionária', 'Adaptado para pessoas com deficiência'] as $index => $item)
+            @foreach(['ABS', 'Amortecedor de Direção', 'Não aceito troca', 'Bolsa/Báu/Bauleto', 'Contra peso no guidon', 'Alarme', 'Escapamento esportivo', 'Adaptado para pessoas com deficiência'] as $index => $item)
                 <label class="btn btn-outline-success rounded-pill px-4 py-2 condicao-btn" style="color: #004E64;" for="condicao{{ $index }}">
                     <input type="checkbox" name="condicoes[]" value="{{ $item }}" class="d-none condicao-checkbox" id="condicao{{ $index }}">
                     {{ $item }}
@@ -21,7 +21,7 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
-            <a href="{{ route('anuncio.step2') }}" class="btn btn-link text-decoration-none">
+            <a href="{{ route('anuncio.step2', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-link text-decoration-none">
                 &larr; <strong>Voltar</strong>
             </a>
             <button type="submit" class="btn btn-dark px-4 py-2">

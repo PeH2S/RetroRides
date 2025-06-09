@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Services\CarApiService;
+use App\Services\VehicleApiService;
 use App\Models\Anuncio;
 use App\Models\AnuncioFoto;
 
 class AnuncioController extends Controller
 {
-    protected CarApiService $carApi;
+    protected VehicleApiService $vehicleApi;
 
-    public function __construct(CarApiService $carApi)
+    protected const VEHICLE_TYPE_MAP = [
+        'carro' => 'cars',
+        'moto' => 'moto',
+    ];
+
+    public function __construct(VehicleApiService $vehicleApi)
     {
-        $this->carApi = $carApi;
+        $this->vehicleApi = $vehicleApi;
     }
 
     public function index()
@@ -26,27 +31,24 @@ class AnuncioController extends Controller
         return view('pages.anuncios.meus', compact('meusAnuncios'));
     }
 
-     public function selectType()
+    public function selectType()
     {
         return view('pages.anuncios.opcao');
     }
 
-     public function step1Car()
+
+    public function step1($tipoVeiculo)
     {
-        session(['anuncio.tipo_veiculo' => 'carro']);
-        return view('pages.anuncios.cars.create.step1');
+
+        if (!array_key_exists($tipoVeiculo, self::VEHICLE_TYPE_MAP)) {
+            abort(404);
+        }
+
+        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        session(['anuncio.tipo_veiculo' => $tipoVeiculo]);
+        return view("pages.anuncios.{$viewFolder}.create.step1");
     }
 
-    public function step1Moto()
-    {
-        session(['anuncio.tipo_veiculo' => 'moto']);
-        return view('pages.anuncios.motos.create.step1');
-    }
-
-    public function step1()
-    {
-        return view('pages.anuncios.cars.create.step1');
-    }
 
     public function step1Post(Request $request)
     {
@@ -60,7 +62,8 @@ class AnuncioController extends Controller
         ]);
 
         session(['anuncio.step1' => $request->all()]);
-        return redirect()->route('anuncio.step2');
+        $tipoVeiculo = session('anuncio.tipo_veiculo');
+        return redirect()->route('anuncio.step2', ['tipoVeiculo' => $tipoVeiculo]);
     }
 
     public function step2()
@@ -70,19 +73,19 @@ class AnuncioController extends Controller
         }
 
         $dados = session('anuncio.step1');
-        $tipoVeiculo = session('anunciar', 'carro');
-        if($tipoVeiculo === 'carro'){
-             $detalhes = $this->carApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo']);
-        $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
-        } else{
-            //mudar para busca api por moto
-            $detalhes = $this->carApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo']);
-        $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
-        }   
+        $tipoVeiculo = session('anuncio.tipo_veiculo', 'carro');
+        if ($tipoVeiculo === 'carro') {
+            $detalhes = $this->vehicleApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo'], $tipoVeiculo);
+            $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
+        } else {
+            $detalhes = $this->vehicleApi->getVehicleDetails($dados['marca'], $dados['modelo'], $dados['ano_modelo'], $tipoVeiculo);
+            $precoFipe = isset($detalhes['price']) ? (float) str_replace(['R$', '.', ','], ['', '', '.'], $detalhes['price']) : null;
+        }
 
-       
 
-        return view("pages.anuncios.{$tipoVeiculo}.create.step2", compact('precoFipe'));
+        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        session(['anuncio.tipo_veiculo' => $tipoVeiculo]);
+        return view("pages.anuncios.{$viewFolder}.create.step2", compact('precoFipe'));
     }
 
     public function step2Post(Request $request)
@@ -92,34 +95,38 @@ class AnuncioController extends Controller
         ]);
 
         session(['anuncio.step2' => $request->except('_token')]);
-        return redirect()->route('anuncio.step3');
+        $tipoVeiculo = session('anuncio.tipo_veiculo');
+        return redirect()->route('anuncio.step3', ['tipoVeiculo' => $tipoVeiculo]);
     }
 
-    public function step3()
+    public function step3($tipoVeiculo)
     {
         if (!session('anuncio.step2')) {
-            return redirect()->route('anuncio.step2')->with('error', 'Complete os passos anteriores primeiro.');
+            return redirect()->route('anuncio.step2', ['tipoVeiculo' => $tipoVeiculo])->with('error', 'Complete os passos anteriores primeiro.');
         }
 
-        return view('pages.anuncios.cars.create.step3');
+        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        return view("pages.anuncios.{$viewFolder}.create.step3");
     }
 
-    public function step3Post(Request $request)
+    public function step3Post(Request $request, $tipoVeiculo)
     {
+        $tipoVeiculo = session('anuncio.tipo_veiculo');
         session(['anuncio.step3' => $request->except('_token')]);
-        return redirect()->route('anuncio.step4');
+        return redirect()->route('anuncio.step4', ['tipoVeiculo' => $tipoVeiculo]);
     }
 
-    public function step4()
+    public function step4($tipoVeiculo)
     {
         if (!session('anuncio.step3')) {
-            return redirect()->route('anuncio.step3')->with('error', 'Complete os passos anteriores primeiro.');
+            return redirect()->route('anuncio.step3', ['tipoVeiculo' => $tipoVeiculo])->with('error', 'Complete os passos anteriores primeiro.');
         }
 
-        return view('pages.anuncios.cars.create.step4');
+        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        return view("pages.anuncios.{$viewFolder}.create.step4");
     }
 
-    public function step4Post(Request $request)
+    public function step4Post(Request $request, $tipoVeiculo)
     {
         $request->validate([
             'fotos' => 'required|array|min:1|max:20',
@@ -140,7 +147,7 @@ class AnuncioController extends Controller
 
         session(['anuncio.temp_fotos' => $fotos]);
         session(['anuncio.step4' => ['fotos' => count($fotos)]]);
-        return redirect()->route('anuncio.finalizar');
+        return redirect()->route('anuncio.finalizar', ['tipoVeiculo' => $tipoVeiculo]);
     }
 
     public function finalizar()
@@ -148,12 +155,12 @@ class AnuncioController extends Controller
         $steps = ['step1', 'step2', 'step3', 'step4'];
         foreach ($steps as $step) {
             if (!session("anuncio.$step")) {
-                return redirect()->route("anuncio.$step")->with('error', 'Complete todos os passos primeiro.');
+                return redirect()->route("anuncio.$step", ['tipoVeiculo' => session('anuncio.tipo_veiculo')])->with('error', 'Complete todos os passos primeiro.');
             }
         }
 
         if (!session('anuncio.temp_fotos')) {
-            return redirect()->route('anuncio.step4')->with('error', 'Adicione pelo menos uma foto do veículo.');
+            return redirect()->route('anuncio.step4', ['tipoVeiculo' => session('anuncio.tipo_veiculo')])->with('error', 'Adicione pelo menos uma foto do veículo.');
         }
 
         $dados = array_merge(
@@ -162,9 +169,13 @@ class AnuncioController extends Controller
             session('anuncio.step3', [])
         );
 
-        return view('pages.anuncios.cars.create.finalizar', [
+        $tipoVeiculo = session('anuncio.tipo_veiculo', 'carro');
+        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+
+        return view("pages.anuncios.{$viewFolder}.create.finalizar", [
             'dados' => $dados,
             'fotos' => session('anuncio.temp_fotos', []),
+            'tipoVeiculo' => $tipoVeiculo
         ]);
     }
 
@@ -173,33 +184,37 @@ class AnuncioController extends Controller
         $steps = ['step1', 'step2', 'step3', 'step4'];
         foreach ($steps as $step) {
             if (!session("anuncio.$step")) {
-                return redirect()->route('anuncio.step1')->with('error', 'Complete todos os passos primeiro.');
+                return redirect()->route('anuncio.step1', ['tipoVeiculo' => session('anuncio.tipo_veiculo')])
+                    ->with('error', 'Complete todos os passos primeiro.');
             }
         }
 
         if (!session('anuncio.temp_fotos')) {
-            return redirect()->route('anuncio.step4')->with('error', 'Adicione pelo menos uma foto do veículo.');
+            return redirect()->route('anuncio.step4', ['tipoVeiculo' => session('anuncio.tipo_veiculo')])
+                ->with('error', 'Adicione pelo menos uma foto do veículo.');
         }
 
+        $tipoVeiculo = session('anuncio.tipo_veiculo');
+        $fipeTipo = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
 
-        $tipoVeiculo = session('anunciar', 'carro');
-
-        if($tipoVeiculo === 'carro'){
-            $detalhes = $this->carApi->getVehicleDetails(
+        try {
+            $detalhes = $this->vehicleApi->getVehicleDetails(
                 session('anuncio.step1.marca'),
                 session('anuncio.step1.modelo'),
-                session('anuncio.step1.ano_modelo')
+                session('anuncio.step1.ano_modelo'),
+                $fipeTipo
             );
-        }else{
+        } catch (\Exception $e) {
             $detalhes = [
-                'brand' => session('anuncio.step.marca'),
+                'brand' => session('anuncio.step1.marca'),
                 'model' => session('anuncio.step1.modelo')
             ];
+            \Log::error("Erro ao buscar detalhes do veículo: " . $e->getMessage());
         }
 
 
 
-        $anuncio = Anuncio::create([
+        $anuncioData = [
             'user_id' => auth()->id(),
             'tipo_veiculo' => $tipoVeiculo,
             'marca' => $detalhes['brand'] ?? session('anuncio.step1.marca'),
@@ -215,13 +230,15 @@ class AnuncioController extends Controller
             'cidade' => session('anuncio.step2.cidade'),
             'estado' => session('anuncio.step2.estado'),
             'quilometragem' => session('anuncio.step2.quilometragem'),
-            'portas' => $tipoVeiculo === 'carro' ? session('anuncio.step2.portas') : null,
             'placa' => session('anuncio.step2.placa'),
             'descricao' => session('anuncio.step2.descricao'),
             'situacao' => session('anuncio.step2.situacao'),
             'detalhes' => is_array(session('anuncio.step3.condicoes')) ? implode(',', session('anuncio.step3.condicoes')) : null,
             'status' => 'ativo',
-        ]);
+        ];
+
+
+        $anuncio = Anuncio::create($anuncioData);
 
         $fotos = session('anuncio.temp_fotos', []);
         $principal = true;
@@ -258,7 +275,8 @@ class AnuncioController extends Controller
     public function show($id)
     {
         $anuncio = Anuncio::with('fotos', 'user')->findOrFail($id);
-        return view('pages.anuncios.cars.search.show', compact('anuncio'));
+        $viewFolder = self::VEHICLE_TYPE_MAP[$anuncio->tipo_veiculo];
+        return view("pages.anuncios.{$viewFolder}.search.show", compact('anuncio'));
     }
 
     public function anunciosProximos(float $latitude, float $longitude, float $raioKm = 100)
@@ -270,8 +288,8 @@ class AnuncioController extends Controller
             )) AS distancia",
             [$latitude, $longitude, $latitude]
         )
-        ->having('distancia', '<=', $raioKm)
-        ->orderBy('distancia')
-        ->get();
+            ->having('distancia', '<=', $raioKm)
+            ->orderBy('distancia')
+            ->get();
     }
 }

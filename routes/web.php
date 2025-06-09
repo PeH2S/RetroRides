@@ -96,37 +96,21 @@ Route::middleware('auth')->group(function () {
     return view('pages.anuncios.opcao');
     })->name('anunciar');
 
-    //Rota "anunciar-moto" (etapa 2)
-    Route::get('/anunciar/moto', [AnuncioController::class, 'step1'])
-          ->name('anunciar-moto');
+   Route::prefix('anunciar/{tipoVeiculo}')
+     ->whereIn('tipoVeiculo', ['carro', 'moto'])
+     ->group(function () {
+        Route::get('/', [AnuncioController::class, 'step1'])->name('anuncio.step1');
+        Route::post('/etapa1', [AnuncioController::class, 'step1Post'])->name('anuncio.step1Post');
 
-    // Rota “anunciar-carros” (etapa 1)
-    Route::get('/anunciar/carro', [AnuncioController::class, 'step1'])
-         ->name('anunciar-carros');
+        Route::get('/etapa2', [AnuncioController::class, 'step2'])->name('anuncio.step2');
+        Route::post('/etapa2', [AnuncioController::class, 'step2Post'])->name('anuncio.step2Post');
 
-    // Etapa 1 do anúncio (GET e POST)
-    Route::get('/anuncio/carro/etapa1', [AnuncioController::class, 'step1'])
-         ->name('anuncio.step1');
-    Route::post('/anuncio/carro/etapa1', [AnuncioController::class, 'step1Post'])
-         ->name('anuncio.step1Post');
+        Route::get('/etapa3', [AnuncioController::class, 'step3'])->name('anuncio.step3');
+        Route::post('/etapa3', [AnuncioController::class, 'step3Post'])->name('anuncio.step3Post');
 
-    // Etapa 2 do anúncio (GET e POST)
-    Route::get('/anuncio/carro/etapa2', [AnuncioController::class, 'step2'])
-         ->name('anuncio.step2');
-    Route::post('/anuncio/carro/etapa2', [AnuncioController::class, 'step2Post'])
-         ->name('anuncio.step2Post');
-
-    // Etapa 3 do anúncio (GET e POST)
-    Route::get('/anuncio/carro/etapa3', [AnuncioController::class, 'step3'])
-         ->name('anuncio.step3');
-    Route::post('/anuncio/carro/etapa3', [AnuncioController::class, 'step3Post'])
-         ->name('anuncio.step3Post');
-
-    // Etapa 4 do anúncio (GET e POST)
-    Route::get('/anuncio/carro/etapa4', [AnuncioController::class, 'step4'])
-         ->name('anuncio.step4');
-    Route::post('/anuncio/carro/etapa4', [AnuncioController::class, 'step4Post'])
-         ->name('anuncio.step4Post');
+        Route::get('/etapa4', [AnuncioController::class, 'step4'])->name('anuncio.step4');
+        Route::post('/etapa4', [AnuncioController::class, 'step4Post'])->name('anuncio.step4Post');
+    });
 
     // Tela de confirmação final (GET)
     Route::get('/anuncio/finalizar', [AnuncioController::class, 'finalizar'])
@@ -153,12 +137,6 @@ Route::post('password/reset', [\App\Http\Controllers\Auth\ResetPasswordControlle
 
 
 Route::get('/anuncios/{id}', [AnuncioController::class, 'show'])->name('anuncio.show');
-
-
-//mudar
-Route::get('/anuncios-carros', function(){
-    return view('pages.anuncios.cars.search.list');
-})->name('anuncios-carros');
 
 
 //Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');

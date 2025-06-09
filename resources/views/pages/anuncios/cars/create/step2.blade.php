@@ -38,7 +38,7 @@
             </div>
         @endif
 
-        <form action="{{ route('anuncio.step2') }}" method="POST">
+        <form action="{{ route('anuncio.step2', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" method="POST">
             @csrf
 
             <div class="bg-white p-4 rounded shadow-sm mx-auto" style="max-width: 700px;">
@@ -151,7 +151,7 @@
 
                 <!-- Navegação -->
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('anuncio.step1') }}" class="btn btn-outline-secondary">&larr; Voltar</a>
+                    <a href="{{ route('anuncio.step1', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-outline-secondary">&larr; Voltar</a>
                     <button type="submit" class="btn btn-danger">Continuar &rarr;</button>
                 </div>
             </div>

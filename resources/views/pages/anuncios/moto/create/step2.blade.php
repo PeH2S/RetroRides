@@ -38,7 +38,7 @@
             </div>
         @endif
 
-        <form action="{{ route('anuncio.step2') }}" method="POST">
+        <form action="{{ route('anuncio.step2', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" method="POST">
             @csrf
 
             <div class="bg-white p-4 rounded shadow-sm mx-auto" style="max-width: 700px;">
@@ -73,17 +73,6 @@
                     </select>
                 </div>
 
-                <!-- Número de Portas -->
-                <div class="mb-4">
-                    <label for="portas" class="form-label fw-semibold">Número de portas*</label>
-                    <select class="form-select" id="portas" name="portas" required>
-                        <option value="" disabled selected>Selecione</option>
-                        <option value="2">2 portas</option>
-                        <option value="3">3 portas</option>
-                        <option value="4">4 portas</option>
-                        <option value="5">5 portas</option>
-                    </select>
-                </div>
 
                 <!-- Descrição com contador -->
                 <div class="mb-4">
@@ -151,7 +140,7 @@
 
                 <!-- Navegação -->
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('anuncio.step1') }}" class="btn btn-outline-secondary">&larr; Voltar</a>
+                    <a href="{{ route('anuncio.step1', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-outline-secondary">&larr; Voltar</a>
                     <button type="submit" class="btn btn-danger">Continuar &rarr;</button>
                 </div>
             </div>

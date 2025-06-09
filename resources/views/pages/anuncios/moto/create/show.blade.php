@@ -3,7 +3,6 @@
 @section('main')
 <div class="container my-5">
     <div class="bg-white p-4 shadow-sm rounded">
-        <h2 class="mb-4">Detalhes do Anúncio #{{ $anuncio->id }}</h2>
 
         <div class="row mb-3">
             <div class="col-md-6">
@@ -14,6 +13,8 @@
                 <p><strong>Cor:</strong> {{ $anuncio->cor }}</p>
                 <p><strong>Combustível:</strong> {{ $anuncio->combustivel }}</p>
                 <p><strong>Portas:</strong> {{ $anuncio->portas }}</p>
+                <p >Detalhes do Anúncio #{{ $anuncio->id }}</p>
+
                 <p><strong>Quilometragem:</strong> {{ number_format($anuncio->quilometragem, 0, ',', '.') }} km</p>
                 <p><strong>Preço:</strong> <span class="text-success">R$ {{ number_format($anuncio->preco, 2, ',', '.') }}</span></p>
             </div>

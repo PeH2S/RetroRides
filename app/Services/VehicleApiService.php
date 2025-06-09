@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
 
-class CarApiService
+class VehicleApiService
 {
     protected $baseUrl;
     protected $cacheHours;
@@ -72,7 +72,7 @@ class CarApiService
     }
 
 
-    public function getModels($brandId, $vehicleType = null)
+    public function getModels($brandId, $vehicleType)
     {
         $vehicleType = $this->getVehicleType($vehicleType);
         try {
@@ -104,8 +104,10 @@ class CarApiService
         }
     }
 
-    public function getYears($brandId, $modelId, $vehicleType = 'cars')
+    public function getYears($brandId, $modelId, $vehicleType)
     {
+
+        $vehicleType = $this->getVehicleType($vehicleType);
         try {
             return Cache::remember("fipe_years_{$vehicleType}_{$brandId}_{$modelId}", $this->cacheTime, function () use ($brandId, $modelId, $vehicleType) {
                 $response = $this->client->get("{$this->baseUrl}/{$vehicleType}/brands/{$brandId}/models/{$modelId}/years", [
@@ -129,8 +131,10 @@ class CarApiService
         }
     }
 
-    public function getVehicleDetails($brandId, $modelId, $yearId, $vehicleType = 'cars')
+    public function getVehicleDetails($brandId, $modelId, $yearId, $vehicleType)
     {
+        $vehicleType = $this->getVehicleType($vehicleType);
+        
         try {
             $cacheKey = "fipe_details_{$vehicleType}_{$brandId}_{$modelId}_{$yearId}";
 

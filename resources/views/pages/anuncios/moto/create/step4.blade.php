@@ -8,7 +8,7 @@
         Para reordenar as fotos, você deve clicar na foto e arrastar para posição desejada.
     </p>
 
-    <form action="{{route('anuncio.step4')  }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('anuncio.step4', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="row justify-content-center mb-4" id="preview-container">
@@ -30,7 +30,7 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
-            <a href="{{ route('anuncio.step3') }}" class="btn btn-link text-decoration-none">
+            <a href="{{ route('anuncio.step3', ['tipoVeiculo' => session('anuncio.tipo_veiculo')]) }}" class="btn btn-link text-decoration-none">
                 &larr; <strong>Voltar</strong>
             </a>
             <button type="submit" class="btn btn-success px-4 py-2">
