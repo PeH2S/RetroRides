@@ -273,7 +273,7 @@ class AnuncioController extends Controller
     {
         $anuncio = Anuncio::with('fotos', 'user')->findOrFail($id);
         $viewFolder = VehicleHelper::getViewFolder($anuncio->tipo_veiculo);
-        return view("pages.anuncios.{$viewFolder}.search.show", compact('anuncio'));
+        return view("pages.anuncios.search.show", compact('anuncio'));
     }
 
     public function anunciosProximos(float $latitude, float $longitude, float $raioKm = 100)

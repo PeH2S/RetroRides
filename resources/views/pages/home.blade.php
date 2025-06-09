@@ -6,7 +6,7 @@
 
 <section class="py-5 bg-white">
     <div class="container">
-        <h2 class="fw-bold fs-4 mb-4 text-center">Carros mais buscados</h2>
+        <h2 class="fw-bold fs-3 mb-4 text-center" style="color: #004E64;">Carros mais buscados</h2>
         <div class="row g-4 justify-content-center">
             @foreach($marcasPopulares as $item)
             <div class="col-6 col-sm-4 col-md-3 col-lg-2">
@@ -34,18 +34,18 @@
 </section>
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="fw-bold fs-3 mb-5 text-center">Mundo Retrô: Carros e Motos Clássicos</h2>
+        <h2 class="fw-bold fs-3 mb-5 text-center" style="color:#004E64;">Mundo Retrô: Carros e Motos Clássicos</h2>
         <div class="row g-4">
             <!-- Bloco maior à esquerda -->
             <div class="col-lg-8">
                 <div class="p-4 bg-white rounded shadow h-100 d-flex flex-column justify-content-between">
                     <div>
-                        <h3 class="fw-bold text-primary">Volkswagen Fusca: O Ícone Brasileiro</h3>
+                        <h3 class="fw-bold" style="color: #004E64;">Volkswagen Fusca: O Ícone Brasileiro</h3>
                         <p class="text-muted">
                             O Fusca marcou gerações com seu design arredondado e resistência mecânica. Mesmo décadas após sua produção, ele ainda circula pelas ruas como símbolo de nostalgia e simplicidade.
                         </p>
                     </div>
-                    <img src="{{ asset('images/retro/fusca.jpg') }}" alt="Fusca retrô"
+                    <img src="{{ asset('images/retro/fusca.png') }}" alt="Fusca retrô"
                          class="img-fluid rounded mt-3">
                 </div>
             </div>
@@ -54,23 +54,23 @@
             <div class="col-lg-4 d-flex flex-column gap-4">
                 <div class="p-4 bg-white rounded shadow h-100 d-flex flex-column justify-content-between">
                     <div>
-                        <h5 class="fw-semibold text-secondary">Harley-Davidson 1948</h5>
+                        <h5 class="fw-semibold" style="color: #004E64;">Harley-Davidson 1948</h5>
                         <p class="text-muted">
                             A clássica Panhead foi símbolo de liberdade nos EUA pós-guerra, eternizada em filmes e estilo de vida rebelde.
                         </p>
                     </div>
-                    <img src="{{ asset('images/retro/harley.jpg') }}" alt="Harley retrô"
+                    <img src="{{ asset('images/retro/harley.png') }}" alt="Harley retrô"
                          class="img-fluid rounded mt-2">
                 </div>
 
                 <div class="p-4 bg-white rounded shadow h-100 d-flex flex-column justify-content-between">
                     <div>
-                        <h5 class="fw-semibold text-secondary">Chevrolet Opala SS</h5>
+                        <h5 class="fw-semibold" style=" color:#004E64;">Chevrolet Opala SS</h5>
                         <p class="text-muted">
                             Lançado em 1971, o Opala SS foi o primeiro esportivo nacional. Seu motor potente e visual agressivo o tornaram ícone das pistas e das ruas.
                         </p>
                     </div>
-                    <img src="{{ asset('images/retro/opala.jpg') }}" alt="Opala retrô"
+                    <img src="{{ asset('images/retro/opala.png') }}" alt="Opala retrô"
                          class="img-fluid rounded mt-2">
                 </div>
             </div>
