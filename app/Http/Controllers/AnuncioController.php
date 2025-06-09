@@ -7,15 +7,12 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\VehicleApiService;
 use App\Models\Anuncio;
 use App\Models\AnuncioFoto;
+use App\Helpers\VehicleHelper;
 
 class AnuncioController extends Controller
 {
     protected VehicleApiService $vehicleApi;
 
-    protected const VEHICLE_TYPE_MAP = [
-        'carro' => 'cars',
-        'moto' => 'moto',
-    ];
 
     public function __construct(VehicleApiService $vehicleApi)
     {
@@ -40,11 +37,11 @@ class AnuncioController extends Controller
     public function step1($tipoVeiculo)
     {
 
-        if (!array_key_exists($tipoVeiculo, self::VEHICLE_TYPE_MAP)) {
+        if (!VehicleHelper::isValidType($tipoVeiculo)) {
             abort(404);
         }
 
-        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        $viewFolder = VehicleHelper::getViewFolder($tipoVeiculo);
         session(['anuncio.tipo_veiculo' => $tipoVeiculo]);
         return view("pages.anuncios.{$viewFolder}.create.step1");
     }
@@ -83,7 +80,7 @@ class AnuncioController extends Controller
         }
 
 
-        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        $viewFolder = VehicleHelper::getViewFolder($tipoVeiculo);
         session(['anuncio.tipo_veiculo' => $tipoVeiculo]);
         return view("pages.anuncios.{$viewFolder}.create.step2", compact('precoFipe'));
     }
@@ -105,7 +102,7 @@ class AnuncioController extends Controller
             return redirect()->route('anuncio.step2', ['tipoVeiculo' => $tipoVeiculo])->with('error', 'Complete os passos anteriores primeiro.');
         }
 
-        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        $viewFolder = VehicleHelper::getViewFolder($tipoVeiculo);
         return view("pages.anuncios.{$viewFolder}.create.step3");
     }
 
@@ -122,7 +119,7 @@ class AnuncioController extends Controller
             return redirect()->route('anuncio.step3', ['tipoVeiculo' => $tipoVeiculo])->with('error', 'Complete os passos anteriores primeiro.');
         }
 
-        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        $viewFolder = VehicleHelper::getViewFolder($tipoVeiculo);
         return view("pages.anuncios.{$viewFolder}.create.step4");
     }
 
@@ -170,7 +167,7 @@ class AnuncioController extends Controller
         );
 
         $tipoVeiculo = session('anuncio.tipo_veiculo', 'carro');
-        $viewFolder = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        $viewFolder = VehicleHelper::getViewFolder($tipoVeiculo);
 
         return view("pages.anuncios.{$viewFolder}.create.finalizar", [
             'dados' => $dados,
@@ -195,7 +192,7 @@ class AnuncioController extends Controller
         }
 
         $tipoVeiculo = session('anuncio.tipo_veiculo');
-        $fipeTipo = self::VEHICLE_TYPE_MAP[$tipoVeiculo];
+        $fipeTipo = VehicleHelper::getFipeTipo($tipoVeiculo);
 
         try {
             $detalhes = $this->vehicleApi->getVehicleDetails(
@@ -275,7 +272,7 @@ class AnuncioController extends Controller
     public function show($id)
     {
         $anuncio = Anuncio::with('fotos', 'user')->findOrFail($id);
-        $viewFolder = self::VEHICLE_TYPE_MAP[$anuncio->tipo_veiculo];
+        $viewFolder = VehicleHelper::getViewFolder($anuncio->tipo_veiculo);
         return view("pages.anuncios.{$viewFolder}.search.show", compact('anuncio'));
     }
 

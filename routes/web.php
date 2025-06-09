@@ -139,12 +139,11 @@ Route::post('password/reset', [\App\Http\Controllers\Auth\ResetPasswordControlle
 Route::get('/anuncios/{id}', [AnuncioController::class, 'show'])->name('anuncio.show');
 
 
-//Route::get('/search', [AnuncioController::class, 'search'])->name('search.cars');
 
 
 Route::middleware(['location'])->group(function () {
     Route::get('/', [HomeController::class, 'Home'])->name('home');
-    Route::get('/search', [SearchController::class, 'index'])->name('search.cars');
+    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 });
 
 

@@ -23,25 +23,25 @@
             <div class="container py-3">
               <div class="row text-center justify-content-center">
                 <div class="col-6 col-md-3 mb-3">
-                  <a href="{{ route('search.cars', ['condicao[]' => 'Usado']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
+                  <a href="{{ route('search.index', ['condicao[]' => 'Usado', 'tipo' => 'carro']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
                     <i class="bi bi-search fs-2 mb-2"></i>
                     <div>Carros usados</div>
                   </a>
                 </div>
                 <div class="col-6 col-md-3 mb-3">
-                  <a href="{{ route('search.cars', ['condicao[]' => 'Novo']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
+                  <a href="{{ route('search.index', ['condicao[]' => 'Novo', 'tipo' => 'carro']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
                     <i class="bi bi-car-front fs-2 mb-2"></i>
                     <div>Carros novos</div>
                   </a>
                 </div>
                 <div class="col-6 col-md-3 mb-3">
-                  <a href="{{ route('search.cars', ['condicao[]' => 'Usado', 'tipo' => 'moto']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
+                  <a href="{{ route('search.index', ['condicao[]' => 'Usado', 'tipo' => 'moto']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
                     <i class="bi bi-bicycle fs-2 mb-2"></i>
                     <div>Motos usadas</div>
                   </a>
                 </div>
                 <div class="col-6 col-md-3 mb-3">
-                  <a href="{{ route('search.cars', ['condicao[]' => 'Novo', 'tipo' => 'moto']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
+                  <a href="{{ route('search.index', ['condicao[]' => 'Novo', 'tipo' => 'moto']) }}" class="card-hover text-decoration-none text-dark d-block border rounded py-4 h-100">
                     <i class="bi bi-bicycle fs-2 mb-2"></i>
                     <div>Motos novas</div>
                   </a>

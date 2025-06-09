@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use App\Services\NominatimService;
+use App\Helpers\VehicleHelper;
 
 class SearchController extends Controller
 {
@@ -23,6 +24,13 @@ class SearchController extends Controller
     public function index(Request $request)
     {
         $query = Anuncio::query();
+
+
+        $tipoVeiculo = $request->input('tipo');
+        if (!empty($tipoVeiculo)) {
+            $query->where('tipo_veiculo', $tipoVeiculo);
+        }
+
 
         $latitude = null;
         $longitude = null;
@@ -151,8 +159,8 @@ class SearchController extends Controller
         }
 
 
-
-        return view('pages.anuncios.cars.search.list', compact('anuncios', 'location'));
+        $tituloVeiculo = $tipoVeiculo === 'moto' ? 'Motos' : 'Carros';
+        return view('pages.anuncios.search.list', compact('anuncios', 'location', 'tipoVeiculo', 'tituloVeiculo'));
     }
 
 
