@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard — liberado para qualquer usuário logado
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
+    Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
     // Adicione esta linha para “Meus anúncios”
     Route::get('/meus-anuncios', [AnuncioController::class, 'index'])
          ->name('anuncios.index');
@@ -69,16 +70,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])
         ->name('chat.index');
     // Favoritos
-    Route::get('/favoritos', [FavoritosController::class, 'index'])
-         ->name('favoritos.index');
 
     // Alertas
     Route::get('/alertas', [AlertasController::class, 'index'])
          ->name('alertas.index');
 
-    // Financiamento
-    Route::get('/financiamento', [FinanciamentoController::class, 'index'])
-         ->name('financiamento.index');
 
     // Ajuda
     Route::get('/ajuda', [AjudaController::class, 'index'])

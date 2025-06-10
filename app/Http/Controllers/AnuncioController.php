@@ -8,6 +8,8 @@ use App\Services\VehicleApiService;
 use App\Models\Anuncio;
 use App\Models\AnuncioFoto;
 use App\Helpers\VehicleHelper;
+use Illuminate\Support\Facades\Auth;
+
 
 class AnuncioController extends Controller
 {
@@ -21,12 +23,16 @@ class AnuncioController extends Controller
 
     public function index()
     {
-        $meusAnuncios = Anuncio::where('user_id', auth()->id())
+        $status = request('status', 'ativo');
+
+        $meusAnuncios = Anuncio::where('user_id', Auth::id())
+            ->where('status', $status)
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(9);
 
         return view('pages.anuncios.meus', compact('meusAnuncios'));
     }
+
 
     public function selectType()
     {
@@ -288,5 +294,18 @@ class AnuncioController extends Controller
             ->having('distancia', '<=', $raioKm)
             ->orderBy('distancia')
             ->get();
+    }
+    public function destroy($id)
+    {
+        $anuncio = Anuncio::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        foreach ($anuncio->fotos as $foto) {
+            Storage::disk('public')->delete($foto->caminho);
+            $foto->delete();
+        }
+
+        $anuncio->delete();
+
+        return redirect()->route('anuncios.index')->with('success', 'Anúncio excluído com sucesso.');
     }
 }
