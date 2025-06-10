@@ -137,21 +137,41 @@
 @endsection
 
 @push('scripts')
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const applyMask = (selector, pattern) => {
-      const el = document.querySelector(selector);
-      if (!el) return;
-      el.addEventListener('input', () => {
-        let v = el.value.replace(/\D/g, '');
-        el.value = v
-          .slice(0, pattern.length)
-          .replace(/./g, (char, i) => pattern[i] === '0' ? v[i] || '' : pattern[i]);
+  <!-- Carrega jQuery e o Mask Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+          integrity="sha512-894YeJE1Yb3UCG+1DfCVQ6F5Q5e5b5Y5vb71s5E6v1j+0ycXnE3HZX4w0H0p+8ZTlSUI+ZjZPdXzR5U2V7p+RA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mask-plugin/1.14.16/jquery.mask.min.js"
+          integrity="sha512-+oM6joggpWZp7+O4H6aAwBsrN1wQfIW3bY5km8K5pD7K5n5EolYc7r4X5xWmY5+vF1yZ1Q2sE3Q0t6vZ6v9jdg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    $(function(){
+      // Máscaras
+      $('#cep').mask('00000-000');
+
+      $('#cpf').mask('000.000.000-00');
+      $('#phone').mask('(00) 00000-0000');
+
+      // Auto-preenchimento de Estado e Cidade assim que CEP completo
+      $('#cep').on('input', function(){
+        const cepRaw = $(this).val().replace(/\D/g, '');
+        if (cepRaw.length !== 8) return;
+
+        $.getJSON(`https://viacep.com.br/ws/${cepRaw}/json/`)
+          .done(function(data){
+            if (!data.erro) {
+              $('#state').val(data.uf);
+              $('#city').val(data.localidade);
+            } else {
+              alert('CEP não encontrado.');
+            }
+          })
+          .fail(function(){
+            alert('Erro ao buscar o CEP.');
+          });
       });
-    };
-    applyMask('#cep', '00000-000');
-    applyMask('#cpf', '000.000.000-00');
-    applyMask('#phone', '(00) 00000-0000');
-  });
-</script>
+    });
+  </script>
 @endpush
+

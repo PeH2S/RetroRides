@@ -30,17 +30,30 @@
       <i class="bi bi-currency-dollar me-2"></i> Financiamento
     </a>
 
-    <a href="{{ route('minha-conta') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('minha-conta') ? 'active' : '' }}">
-      <i class="bi bi-person me-2"></i> Minha conta
+    <!-- Minha conta com collapse -->
+    <li class="nav-item">
+    <a class="nav-link d-flex justify-content-between align-items-center"
+        data-bs-toggle="collapse"
+        href="#minhaContaSubmenu"
+        role="button"
+        aria-expanded="{{ request()->routeIs('minha-conta*') ? 'true' : 'false' }}"
+        aria-controls="minhaContaSubmenu">
+        <span><i class="bi bi-person me-2"></i> Minha conta</span>
+        <i class="bi bi-chevron-down"></i>
     </a>
-    <div class="ms-4 mb-2">
-      <a href="{{ route('minha-conta') }}" class="nav-link py-1 {{ request()->routeIs('minha-conta') ? 'text-decoration-underline' : '' }}">
-        Editar dados
-      </a>
-      <a href="{{ route('minha-conta') }}#personalizacao" class="nav-link py-1 {{ request()->routeIs('minha-conta') && request()->getFragment() === 'personalizacao' ? 'text-decoration-underline' : '' }}">
-        Personalização e dados
-      </a>
+    <div class="collapse {{ request()->routeIs('minha-conta*') ? 'show' : '' }}" id="minhaContaSubmenu">
+        <nav class="nav flex-column ms-3">
+        <a class="nav-link py-1 {{ request()->routeIs('minha-conta') ? 'active' : '' }}"
+            href="{{ route('minha-conta') }}">
+            Editar dados
+        </a>
+        <a class="nav-link py-1 {{ request()->routeIs('minha-conta.update') ? 'active' : '' }}"
+            href="{{ route('minha-conta') }}">
+            Personalização e dados
+        </a>
+        </nav>
     </div>
+    </li>
 
     <a href="{{ route('ajuda') }}" class="nav-link d-flex align-items-center {{ request()->routeIs('ajuda') ? 'active' : '' }}">
       <i class="bi bi-question-circle me-2"></i> Ajuda
