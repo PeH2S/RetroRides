@@ -180,8 +180,7 @@
                                     <div class="mt-3 d-flex justify-content-between">
                                         <a href="/anuncios/{{ $anuncio->id }}"
                                             class="btn btn-sm btn-outline-custom">Ver</a>
-                                        <a href="#"
-                                            class="btn btn-sm btn-warning text-white">Editar</a>
+                                        <a href="{{ route('anuncios.edit', $anuncio->id) }}" class="btn btn-sm btn-warning text-white">Editar</a>
                                         <form action="/meus-anuncios/{{ $anuncio->id }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('delete')

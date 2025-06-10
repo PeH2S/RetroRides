@@ -62,6 +62,12 @@ Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
     Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
+
+     Route::get('/meus-anuncios/{id}/editar', [AnuncioController::class, 'edit'])->name('anuncios.edit');
+
+    // Atualiza os dados do anúncio
+    Route::put('/meus-anuncios/{id}', [AnuncioController::class, 'update'])->name('anuncios.update');
+
     // Adicione esta linha para “Meus anúncios”
     Route::get('/meus-anuncios', [AnuncioController::class, 'index'])
          ->name('anuncios.index');
