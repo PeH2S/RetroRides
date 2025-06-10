@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AccountController;
@@ -37,6 +38,9 @@ Route::middleware('guest')->group(function () {
     // Formulário de registro
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register']);
+
+    Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 });
 
 /*
@@ -57,6 +61,13 @@ Route::middleware('auth')->group(function () {
     // Dashboard — liberado para qualquer usuário logado
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
+    Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
+
+     Route::get('/meus-anuncios/{id}/editar', [AnuncioController::class, 'edit'])->name('anuncios.edit');
+
+    // Atualiza os dados do anúncio
+    Route::put('/meus-anuncios/{id}', [AnuncioController::class, 'update'])->name('anuncios.update');
+
     // Adicione esta linha para “Meus anúncios”
     Route::get('/meus-anuncios', [AnuncioController::class, 'index'])
          ->name('anuncios.index');
@@ -65,16 +76,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])
         ->name('chat.index');
     // Favoritos
-    Route::get('/favoritos', [FavoritosController::class, 'index'])
-         ->name('favoritos.index');
 
     // Alertas
     Route::get('/alertas', [AlertasController::class, 'index'])
          ->name('alertas.index');
 
-    // Financiamento
-    Route::get('/financiamento', [FinanciamentoController::class, 'index'])
-         ->name('financiamento.index');
 
     // Ajuda
     Route::get('/ajuda', [AjudaController::class, 'index'])

@@ -8,6 +8,9 @@ use App\Services\VehicleApiService;
 use App\Models\Anuncio;
 use App\Models\AnuncioFoto;
 use App\Helpers\VehicleHelper;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 
 class AnuncioController extends Controller
 {
@@ -21,12 +24,16 @@ class AnuncioController extends Controller
 
     public function index()
     {
-        $meusAnuncios = Anuncio::where('user_id', auth()->id())
+        $status = request('status', 'ativo');
+
+        $meusAnuncios = Anuncio::where('user_id', Auth::id())
+            ->where('status', $status)
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(9);
 
         return view('pages.anuncios.meus', compact('meusAnuncios'));
     }
+
 
     public function selectType()
     {
@@ -288,5 +295,54 @@ class AnuncioController extends Controller
             ->having('distancia', '<=', $raioKm)
             ->orderBy('distancia')
             ->get();
+    }
+    public function destroy($id)
+    {
+        $anuncio = Anuncio::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        foreach ($anuncio->fotos as $foto) {
+            Storage::disk('public')->delete($foto->caminho);
+            $foto->delete();
+        }
+
+        $anuncio->delete();
+
+        return redirect()->route('anuncios.index')->with('success', 'Anúncio excluído com sucesso.');
+    }
+
+    public function edit($id)
+    {
+        $anuncio = Anuncio::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        return view('pages.anuncios.edit', compact('anuncio'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->merge([
+            'ano_modelo' => preg_replace('/[^0-9]/', '', $request->input('ano_modelo'))
+        ]);
+        $validator = Validator::make($request->all(), [
+            'modelo' => 'required|string|max:255',
+            'ano_modelo' => 'required|numeric',
+            'cor' => 'nullable|string|max:50',
+            'preco' => 'required|numeric',
+            'quilometragem' => 'nullable|string|max:50',
+            'placa' => 'required|string|max:10',
+            'descricao' => 'nullable|string',
+        ]);
+
+
+
+        $anuncio = Anuncio::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $anuncio->update($validator->validated());
+
+         return redirect()->route('anuncios.index')->with('success', 'Anúncio atualizado com sucesso.');
+
     }
 }

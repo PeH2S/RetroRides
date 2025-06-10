@@ -148,3 +148,19 @@ Projeto open-source para fins educacionais. Desenvolvido por Vinicius Thales.
 Vinicius Thales  
 Email: viniciusthales486@gmail.com  
 Framework: Laravel 12  
+Baixe o arquivo atualizado:
+
+https://curl.se/ca/cacert.pem
+
+Coloque ele numa pasta acessível no seu computador, por exemplo:
+
+C:\php\extras\ssl\cacert.pem
+
+No seu arquivo php.ini (aquele usado pelo PHP que roda seu projeto Laravel), configure essas linhas (descomentando e apontando para o caminho correto):
+
+ini
+Copiar
+Editar
+curl.cainfo = "C:\php\extras\ssl\cacert.pem"
+openssl.cafile = "C:\php\extras\ssl\cacert.pem"
+Reinicie seu servidor web ou seu ambiente para aplicar as alterações.
