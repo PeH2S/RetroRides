@@ -90,9 +90,7 @@
     }
 
     .location-modal .close {
-        position: absolute;
-        top: 10px;
-        right: 15px;
+        float: right;
         font-size: 28px;
         cursor: pointer;
         color: #333;
@@ -102,15 +100,35 @@
     .location-modal-content p {
         color: #333;
     }
-</style>
 
+    .location-modal-content button {
+        color: #013746;
+    }
+
+    .location-modal-content button:hover {
+        background-color: #013746;
+    }
+
+    .filtro-item input[type="radio"]:checked+span,
+    .filtro-item input[type="checkbox"]:checked+span {
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .filtro-item input[type="radio"]:checked,
+    .filtro-item input[type="checkbox"]:checked {
+        background-color: #dc2626;
+        border-color: #dc2626;
+    }
+</style>
 <section class="hero-section">
     <div class="hero-content mx-auto">
         <form action="{{ route('search.index') }}" method="GET" id="search-form">
             @php $location = session('user_location'); @endphp
+
             @if ($location)
-                <input type="hidden" name="localizacao" value="{{ $location['latitude'] }},{{ $location['longitude'] }}x100km">
-                <input type="hidden" name="estadocidade" value="{{ $location['estado'] }}-{{ $location['cidade'] }}">
+            <input type="hidden" name="localizacao" value="{{ $location['latitude'] }},{{ $location['longitude'] }}x100km">
+            <input type="hidden" name="estadocidade" value="{{ $location['estado'] }}-{{ $location['cidade'] }}">
             @endif
 
             <div class="filtros d-flex justify-content-center mb-3 flex-wrap">
@@ -148,8 +166,7 @@
             <div class="location-modal-content">
                 <span class="close">&times;</span>
                 <h5>Defina a localização</h5>
-                <!-- Input e botão Aplicar CEP -->
-                <input id="cep-input" type="text" class="form-control mb-2" placeholder="00000-000">
+                <input id="cep-input" type="text" class="form-control mb-3" placeholder="00000-000">
                 <button type="button" id="apply-cep" class="btn btn-primary w-100 mb-3">Aplicar CEP</button>
                 <p id="cep-resultado" class="mt-2 text-muted"></p>
                 <div>
@@ -204,7 +221,6 @@
                     cepResultado.textContent = 'CEP não encontrado';
                     return;
                 }
-                // atualiza texto e fecha
                 const texto = `${data.localidade} - ${data.uf}`;
                 locationText.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${texto}`;
                 modal.style.display = "none";
