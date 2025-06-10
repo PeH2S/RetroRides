@@ -39,6 +39,12 @@ class User extends Authenticatable
         return $this->hasMany(Anuncio::class);
     }
 
+    public function favoritos()
+    {
+        return $this->belongsToMany(Anuncio::class, 'favoritos')
+                    ->withTimestamps();
+    }
+    
     /**
      * Get the attributes that should be cast.
      *
