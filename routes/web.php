@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AccountController;
@@ -37,6 +38,9 @@ Route::middleware('guest')->group(function () {
     // Formulário de registro
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register']);
+
+    Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 });
 
 /*
