@@ -127,6 +127,10 @@ O token da API FIPE deve ser adicionado no `.env`:
 
 ```env
 FIPE_API_TOKEN=seu_token
+GOOGLE_CLIENT_ID=SEU_CLIENT_ID
+GOOGLE_CLIENT_SECRET=SEU_CLIENT_SECRET
+GOOGLE_REDIRECT_URI=http://localhost:8000/login/google/callback
+Substitua pelo domínio real do seu app em produção.
 ```
 
 A autenticação é gerenciada no `CarApiService.php`.
