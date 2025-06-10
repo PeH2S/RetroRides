@@ -118,11 +118,6 @@
                     <a href="{{ route('minha-conta') }}" class="nav-link @if (request()->routeIs('minha-conta')) active @endif">
                         <i class="bi bi-person me-2"></i> Minha conta
                     </a>
-                    <div class="ms-4">
-                        <a href="{{ route('minha-conta') }}" class="nav-link py-1 text-muted">Editar dados</a>
-                        <a href="{{ route('minha-conta') }}#personalizacao" class="nav-link py-1 text-muted">Personalização
-                            e dados</a>
-                    </div>
                     <a href="{{ route('ajuda') }}" class="nav-link @if (request()->routeIs('ajuda')) active @endif">
                         <i class="bi bi-question-circle me-2"></i> Ajuda
                     </a>
