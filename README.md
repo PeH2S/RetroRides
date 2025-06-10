@@ -164,3 +164,7 @@ Editar
 curl.cainfo = "C:\php\extras\ssl\cacert.pem"
 openssl.cafile = "C:\php\extras\ssl\cacert.pem"
 Reinicie seu servidor web ou seu ambiente para aplicar as alterações.
+PUSHER_APP_ID=2006092
+PUSHER_APP_KEY=c315c4e2f577feb87dce
+PUSHER_APP_SECRET=a58893f2e2d350df0f8c
+PUSHER_HOST=sa1

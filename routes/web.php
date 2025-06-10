@@ -31,16 +31,16 @@ Route::get('/anuncios-carros', fn() => view('pages.anuncios.cars.search.list'))
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    // Formulário de login
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
+     // Formulário de login
+     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+     Route::post('login', [LoginController::class, 'login']);
 
-    // Formulário de registro
-    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [RegisterController::class, 'register']);
+     // Formulário de registro
+     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+     Route::post('register', [RegisterController::class, 'register']);
 
-    Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
-    Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+     Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+     Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 });
 
 /*
@@ -58,72 +58,77 @@ Route::post('logout', [LoginController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    // Dashboard — liberado para qualquer usuário logado
-    Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
+     // Dashboard — liberado para qualquer usuário logado
+     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
-    Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
+     Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
 
      Route::get('/meus-anuncios/{id}/editar', [AnuncioController::class, 'edit'])->name('anuncios.edit');
 
-    // Atualiza os dados do anúncio
-    Route::put('/meus-anuncios/{id}', [AnuncioController::class, 'update'])->name('anuncios.update');
+     // Atualiza os dados do anúncio
+     Route::put('/meus-anuncios/{id}', [AnuncioController::class, 'update'])->name('anuncios.update');
 
-    // Adicione esta linha para “Meus anúncios”
-    Route::get('/meus-anuncios', [AnuncioController::class, 'index'])
-         ->name('anuncios.index');
+     // Adicione esta linha para “Meus anúncios”
+     Route::get('/meus-anuncios', [AnuncioController::class, 'index'])
+          ->name('anuncios.index');
 
-    // Rota para página de Chat:
-    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])
-        ->name('chat.index');
-    // Favoritos
+     Route::post('/conversas/{anuncio}', [ChatController::class, 'iniciarOuObter']);
+     Route::get('/conversas', [ChatController::class, 'listar']);
+     Route::get('/conversas/{conversa}', [ChatController::class, 'ver']);
+     Route::post('/mensagens', [ChatController::class, 'enviarMensagem']);
 
-    // Alertas
-    Route::get('/alertas', [AlertasController::class, 'index'])
-         ->name('alertas.index');
+     // Rota para página de Chat:
+     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])
+          ->name('chat.index');
+     // Favoritos
+
+     // Alertas
+     Route::get('/alertas', [AlertasController::class, 'index'])
+          ->name('alertas.index');
 
 
-    // Ajuda
-    Route::get('/ajuda', [AjudaController::class, 'index'])
-         ->name('ajuda');
+     // Ajuda
+     Route::get('/ajuda', [AjudaController::class, 'index'])
+          ->name('ajuda');
 
-    // CRUD de usuários → apenas admin (ID = 1)
-    Route::middleware('isAdmin')->group(function () {
-        Route::resource('users', UserController::class);
-    });
+     // CRUD de usuários → apenas admin (ID = 1)
+     Route::middleware('isAdmin')->group(function () {
+          Route::resource('users', UserController::class);
+     });
 
-    // “Minha Conta” — qualquer usuário logado pode ver
-    Route::get('/minha-conta', [AccountController::class, 'index'])
-         ->name('minha-conta');
-    Route::post('/minha-conta', [AccountController::class, 'update'])
-         ->name('minha-conta.update');
+     // “Minha Conta” — qualquer usuário logado pode ver
+     Route::get('/minha-conta', [AccountController::class, 'index'])
+          ->name('minha-conta');
+     Route::post('/minha-conta', [AccountController::class, 'update'])
+          ->name('minha-conta.update');
 
-    // Tela de escolha de tipo de anúncio
-    Route::get('/anunciar', function(){
-    return view('pages.anuncios.opcao');
-    })->name('anunciar');
+     // Tela de escolha de tipo de anúncio
+     Route::get('/anunciar', function () {
+          return view('pages.anuncios.opcao');
+     })->name('anunciar');
 
-   Route::prefix('anunciar/{tipoVeiculo}')
-     ->whereIn('tipoVeiculo', ['carro', 'moto'])
-     ->group(function () {
-        Route::get('/', [AnuncioController::class, 'step1'])->name('anuncio.step1');
-        Route::post('/etapa1', [AnuncioController::class, 'step1Post'])->name('anuncio.step1Post');
+     Route::prefix('anunciar/{tipoVeiculo}')
+          ->whereIn('tipoVeiculo', ['carro', 'moto'])
+          ->group(function () {
+               Route::get('/', [AnuncioController::class, 'step1'])->name('anuncio.step1');
+               Route::post('/etapa1', [AnuncioController::class, 'step1Post'])->name('anuncio.step1Post');
 
-        Route::get('/etapa2', [AnuncioController::class, 'step2'])->name('anuncio.step2');
-        Route::post('/etapa2', [AnuncioController::class, 'step2Post'])->name('anuncio.step2Post');
+               Route::get('/etapa2', [AnuncioController::class, 'step2'])->name('anuncio.step2');
+               Route::post('/etapa2', [AnuncioController::class, 'step2Post'])->name('anuncio.step2Post');
 
-        Route::get('/etapa3', [AnuncioController::class, 'step3'])->name('anuncio.step3');
-        Route::post('/etapa3', [AnuncioController::class, 'step3Post'])->name('anuncio.step3Post');
+               Route::get('/etapa3', [AnuncioController::class, 'step3'])->name('anuncio.step3');
+               Route::post('/etapa3', [AnuncioController::class, 'step3Post'])->name('anuncio.step3Post');
 
-        Route::get('/etapa4', [AnuncioController::class, 'step4'])->name('anuncio.step4');
-        Route::post('/etapa4', [AnuncioController::class, 'step4Post'])->name('anuncio.step4Post');
-    });
+               Route::get('/etapa4', [AnuncioController::class, 'step4'])->name('anuncio.step4');
+               Route::post('/etapa4', [AnuncioController::class, 'step4Post'])->name('anuncio.step4Post');
+          });
 
-    // Tela de confirmação final (GET)
-    Route::get('/anuncio/finalizar', [AnuncioController::class, 'finalizar'])
-         ->name('anuncio.finalizar');
-    // POST para salvar o anúncio com fotos
-    Route::post('/anuncio/confirmar', [AnuncioController::class, 'confirmarAnuncio'])
-         ->name('anuncio.confirmar');
+     // Tela de confirmação final (GET)
+     Route::get('/anuncio/finalizar', [AnuncioController::class, 'finalizar'])
+          ->name('anuncio.finalizar');
+     // POST para salvar o anúncio com fotos
+     Route::post('/anuncio/confirmar', [AnuncioController::class, 'confirmarAnuncio'])
+          ->name('anuncio.confirmar');
 });
 
 /*
@@ -148,11 +153,10 @@ Route::get('/anuncios/{id}', [AnuncioController::class, 'show'])->name('anuncio.
 
 
 Route::middleware(['location'])->group(function () {
-    Route::get('/', [HomeController::class, 'Home'])->name('home');
-    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+     Route::get('/', [HomeController::class, 'Home'])->name('home');
+     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 });
 
 
 Route::post('/definir-localizacao', [LocationController::class, 'store'])
      ->name('location.store');
-
