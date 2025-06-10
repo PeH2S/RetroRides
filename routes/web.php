@@ -150,3 +150,5 @@ Route::middleware(['location'])->group(function () {
 Route::post('/definir-localizacao', [LocationController::class, 'store'])
      ->name('location.store');
 
+Route::post('/definir-localizacao-cep', [LocationController::class, 'storeByCep']);
+

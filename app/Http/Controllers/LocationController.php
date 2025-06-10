@@ -42,6 +42,16 @@ class LocationController extends Controller
         ]);
     }
 
+    public function storeByCep(Request $request)
+    {
+        $data = $request->validate([
+            'cidade' => 'required|string',
+            'estado' => 'required|string',
+        ]);
+        session(['user_location' => $data]);
+        return response()->json(['sucesso' => true]);
+    }
+
     private function converterEstadoParaUF(?string $estado): ?string
     {
         $ufs = [

@@ -1,54 +1,60 @@
-{{-- resources/views/pages/anuncios/details.blade.php --}}
 @extends('static.layoutHome')
 
 @section('main')
 <div class="container mt-4">
-    <a href="{{ route('anuncios.index') }}" class="btn btn-outline-secondary mb-3">
-        &larr; Voltar para a lista
-    </a>
-
-    <div class="bg-white p-4 shadow-sm rounded">
-        <h4 class="mb-4">Detalhes do Anúncio #{{ $anuncio->id }}</h4>
-
-        <div class="row mb-4">
-            {{-- Coluna de dados principais --}}
-            <div class="col-md-6">
-                <p><strong>Marca:</strong> {{ $anuncio->marca }}</p>
-                <p><strong>Modelo:</strong> {{ $anuncio->modelo }}</p>
-                <p><strong>Ano Modelo:</strong> {{ $anuncio->ano_modelo }}</p>
-                <p><strong>Ano Fabricação:</strong> {{ $anuncio->ano_fabricacao }}</p>
-                <p><strong>Cor:</strong> {{ $anuncio->cor }}</p>
-                <p><strong>Combustível:</strong> {{ $anuncio->combustivel }}</p>
-                <p><strong>Portas:</strong> {{ $anuncio->portas }}</p>
-                <p><strong>Quilometragem:</strong> {{ number_format($anuncio->quilometragem, 0, ',', '.') }} km</p>
-                <p>
-                    <strong>Preço:</strong>
-                    <span class="text-danger">R$ {{ number_format($anuncio->preco, 2, ',', '.') }}</span>
-                </p>
+  <div class="row">
+    {{-- Carousel de fotos --}}
+    <div class="col-md-8">
+      <div id="anuncioCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          @foreach($anuncio->fotos as $i => $foto)
+            <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
+              <img src="{{ asset('storage/'.$foto->path) }}" class="d-block w-100" alt="Foto {{ $i+1 }}">
             </div>
-
-            {{-- Coluna de descrição e status --}}
-            <div class="col-md-6">
-                <p><strong>Descrição:</strong></p>
-                <p>{{ $anuncio->descricao }}</p>
-                <p>
-                    <strong>Status:</strong>
-                    <span class="badge bg-success">{{ ucfirst($anuncio->status) }}</span>
-                </p>
-            </div>
+          @endforeach
         </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#anuncioCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#anuncioCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
 
-        {{-- Fotos --}}
-        <h5 class="mb-3">Fotos do Veículo</h5>
-        <div class="row">
-            @foreach($anuncio->fotos as $foto)
-                <div class="col-6 col-md-3 mb-3">
-                    <img src="{{ asset('storage/' . $foto->caminho) }}"
-                         class="img-fluid rounded shadow-sm"
-                         alt="Foto do anúncio">
-                </div>
-            @endforeach
-        </div>
+      {{-- Detalhes do veículo --}}
+      <h2 class="mt-3">{{ $anuncio->titulo }}</h2>
+      <h4 class="text-danger">R$ {{ number_format($anuncio->preco, 2, ',', '.') }}</h4>
+      <p><i class="bi bi-geo-alt-fill"></i> {{ $anuncio->cidade }} - {{ $anuncio->estado }}</p>
+      <ul class="list-inline">
+        <li class="list-inline-item"><i class="bi bi-speedometer2"></i> {{ $anuncio->km }} km</li>
+        <li class="list-inline-item"><i class="bi bi-calendar"></i> {{ $anuncio->ano }}</li>
+        <li class="list-inline-item"><i class="bi bi-fuel-pump"></i> {{ $anuncio->combustivel }}</li>
+      </ul>
+
+      {{-- Mapa --}}
+      <div class="mt-4">
+        <iframe 
+          src="https://www.google.com/maps?q={{ $anuncio->lat }},{{ $anuncio->lng }}&output=embed" 
+          width="100%" height="300" style="border:0;" allowfullscreen=""
+        ></iframe>
+      </div>
     </div>
+
+    {{-- Sidebar do vendedor --}}
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <img src="{{ asset('storage/'.$anuncio->user->avatar) }}" class="rounded-circle mb-2" width="80">
+          <h5>{{ $anuncio->user->name }}</h5>
+          <a href="tel:{{ $anuncio->user->phone }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+            <i class="bi bi-telephone-fill"></i> Ligar
+          </a>
+          <a href="#" class="btn btn-primary btn-sm w-100">
+            <i class="bi bi-chat-dots-fill"></i> Chat
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
