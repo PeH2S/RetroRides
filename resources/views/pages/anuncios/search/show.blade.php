@@ -420,7 +420,7 @@
                             <label for="comentario" class="form-label">Comentário (opcional)</label>
                             <textarea class="form-control" id="comentario" name="comentario" rows="3" maxlength="500"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Enviar aavaliação</button>
+                        <button type="submit" class="btn btn-primary">Enviar avaliação</button>
                     </form>
                 </div>
             @endif

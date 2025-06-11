@@ -1,144 +1,105 @@
 @extends('static.layoutHome')
 
 @section('main')
-<style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f9f9f9;
-        color: #333;
-    }
-
-    .nav-link {
-        color: #555;
-        font-weight: 500;
-        padding: 10px 15px;
-        border-radius: 8px;
-    }
-
-    .nav-link.active {
-        color: #004E64 !important;
-        background-color: #e6f2f4;
-    }
-
-    .nav-link:hover {
-        background-color: #f4f4f4;
-    }
-
-    .btn-custom {
-        background-color: #004E64;
-        color: white;
-        border: none;
-    }
-
-    .btn-custom:hover {
-        background-color: #00394b;
-    }
-
-    .sidebar-avatar {
-        background-color: #004E64;
-        width: 60px;
-        height: 60px;
-        line-height: 60px;
-        font-size: 24px;
-    }
-
-    .form-control:focus {
-        box-shadow: none;
-        border-color: #004E64;
-    }
-
-    .form-select:focus {
-        box-shadow: none;
-        border-color: #004E64;
-    }
-</style>
-
 <div class="container-fluid">
-    <div class="row">
-        {{-- Menu lateral --}}
-        <div class="col-md-3 bg-white border-end min-vh-100 p-0">
-            @include('components.sidebar-menu')
-        </div>
-
-        {{-- Conteúdo principal --}}
-        <div class="col-md-9 p-4">
-            <h2 class="mb-4 fw-bold text-dark">Minha conta</h2>
-            <div class="row">
-                {{-- Meus dados --}}
-                <div class="col-lg-6 mb-4">
-                    <div class="bg-white p-4 rounded border">
-                        <h5 class="mb-3">Meus dados</h5>
-                        <form action="{{ route('minha-conta.update') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="email" class="form-label">E-mail*</label>
-                                <input type="email" id="email" name="email" class="form-control" value="{{ old('email', Auth::user()->email) }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Nome completo*</label>
-                                <input type="text" id="name" name="name" class="form-control" value="{{ old('name', Auth::user()->name) }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="gender" class="form-label">Gênero*</label>
-                                <select id="gender" name="gender" class="form-select" required>
-                                    <option disabled>Selecione</option>
-                                    <option value="masculino" @selected(old('gender', Auth::user()->gender) === 'masculino')>Masculino</option>
-                                    <option value="feminino" @selected(old('gender', Auth::user()->gender) === 'feminino')>Feminino</option>
-                                    <option value="outro" @selected(old('gender', Auth::user()->gender) === 'outro')>Outro</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="birthdate" class="form-label">Data de nascimento*</label>
-                                <input type="date" id="birthdate" name="birthdate" class="form-control" value="{{ old('birthdate', Auth::user()->birthdate?->format('Y-m-d')) }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="cpf" class="form-label">CPF*</label>
-                                <input type="text" id="cpf" name="cpf" class="form-control" value="{{ old('cpf', Auth::user()->cpf) }}" required>
-                            </div>
-                            <p class="small text-muted">Cadastro exclusivo para maiores de 18 anos.</p>
-                        </form>
-                    </div>
-                </div>
-
-                {{-- Endereço e contato --}}
-                <div class="col-lg-6 mb-4">
-                    <div class="bg-white p-4 rounded border">
-                        <h5 class="mb-3">Endereço e contato</h5>
-                        <form action="{{ route('minha-conta.update') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="cep" class="form-label">CEP*</label>
-                                <input type="text" id="cep" name="cep" class="form-control" value="{{ old('cep', Auth::user()->address->cep ?? '') }}" required>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-md-4">
-                                    <label for="state" class="form-label">Estado*</label>
-                                    <input type="text" id="state" name="state" class="form-control" value="{{ old('state', Auth::user()->address->state ?? '') }}" required>
-                                </div>
-                                <div class="col-md-8">
-                                    <label for="city" class="form-label">Cidade*</label>
-                                    <input type="text" id="city" name="city" class="form-control" value="{{ old('city', Auth::user()->address->city ?? '') }}" required>
-                                </div>
-                            </div>
-                            <div class="mb-3 d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <label for="phone" class="form-label">Telefone*</label>
-                                    <input type="text" id="phone" name="phone" class="form-control" value="{{ old('phone', Auth::user()->phone) }}" required>
-                                </div>
-                                <button type="button" class="btn btn-link text-danger ms-2 mt-4 p-0" onclick="document.getElementById('phone').removeAttribute('disabled');">Editar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-end">
-                <form action="{{ route('minha-conta.update') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-custom px-4">Salvar alterações</button>
-                </form>
-            </div>
-        </div>
+  <div class="row">
+    {{-- Sidebar --}}
+    <div class="col-md-3 bg-light border-end vh-100 p-0">
+      @include('components.sidebar-menu')
     </div>
+
+    {{-- Conteúdo --}}
+    <div class="col-md-9 p-4">
+
+      @if($tab === 'overview')
+        <h1 class="mb-4">Bem-vindo, {{ $user->name }}!</h1>
+
+        <div class="row gy-4">
+          {{-- Meus Dados --}}
+          <div class="col-lg-6">
+            <div class="bg-white p-4 rounded shadow-sm">
+              <h5 class="mb-3">Meus Dados</h5>
+              <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input type="text" class="form-control" value="{{ $user->email }}" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nome completo</label>
+                <input type="text" class="form-control" value="{{ $user->name }}" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Gênero</label>
+                <input type="text" class="form-control" value="{{ $user->gender ?? '—' }}" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Data de nascimento</label>
+                <input type="text" class="form-control"
+                       value="{{ optional($user->birthdate)->format('d/m/Y') ?? '—' }}"
+                       readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">CPF</label>
+                <input type="text" class="form-control" value="{{ $user->cpf ?? '—' }}" readonly>
+              </div>
+            </div>
+          </div>
+
+          {{-- Endereço e Contato --}}
+          <div class="col-lg-6">
+            <div class="bg-white p-4 rounded shadow-sm">
+              <h5 class="mb-3">Endereço e Contato</h5>
+              <div class="mb-3">
+                <label class="form-label">CEP</label>
+                <input type="text" class="form-control" value="{{ $user->cep ?? '—' }}" readonly>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Estado</label>
+                  <input type="text" class="form-control" value="{{ $user->state ?? '—' }}" readonly>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label">Cidade</label>
+                  <input type="text" class="form-control" value="{{ $user->city ?? '—' }}" readonly>
+                </div>
+              </div>
+
+              {{-- Telefone apenas se show_phone == true --}}
+              @if($user->show_phone)
+                <div class="mb-3">
+                  <label class="form-label">Telefone</label>
+                  <input type="text" class="form-control" value="{{ $user->phone }}" readonly>
+                </div>
+              @else
+                <div class="mb-3">
+                  <label class="form-label">Telefone</label>
+                  <input type="text" class="form-control" value="—" readonly>
+                </div>
+              @endif
+
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" disabled
+                       {{ $user->show_phone ? 'checked' : '' }}>
+                <label class="form-check-label">Exibir telefone</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <a href="{{ route('dashboard.account') }}" class="btn btn-primary">
+            Editar meus dados
+          </a>
+        </div>
+
+      @elseif($tab === 'account')
+        <h1 class="mb-4">Minha Conta</h1>
+        @if(session('success'))
+          <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @include('pages.partials.account-form')
+      @endif
+
+    </div>
+  </div>
 </div>
 @endsection

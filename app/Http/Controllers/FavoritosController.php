@@ -9,32 +9,38 @@ use Illuminate\Support\Facades\Auth;
 
 class FavoritosController extends Controller
 {
+    /**
+     * Toggle favorito via AJAX: adiciona ou remove.
+     */
     public function toggle(Anuncio $anuncio)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json(['error' => 'Faça login para favoritar'], 401);
         }
 
-        $favorito = Favorito::where('user_id', Auth::id())
-            ->where('anuncio_id', $anuncio->id)
-            ->first();
+        $user = Auth::user();
+        $attached = $user->anunciosFavoritados()->toggle($anuncio);
 
-        if ($favorito) {
-            $favorito->delete();
-            return response()->json(['action' => 'removed', 'count' => $anuncio->favoritadoPor()->count()]);
-        } else {
-            Favorito::create([
-                'user_id' => Auth::id(),
-                'anuncio_id' => $anuncio->id
-            ]);
-            return response()->json(['action' => 'added', 'count' => $anuncio->favoritadoPor()->count()]);
-        }
+        $action = isset($attached['attached']) && count($attached['attached'])
+            ? 'added'
+            : 'removed';
+
+        return response()->json([
+            'action' => $action,
+            'count'  => $anuncio->favoritadoPor()->count(),
+        ]);
     }
 
+    /**
+     * Exibe a lista paginada de favoritos.
+     */
     public function index()
     {
-        $favoritos = auth()->user()->anunciosFavoritados()
-            ->with(['fotos', 'user'])
+        $user = Auth::user();
+
+        $favoritos = $user
+            ->anunciosFavoritados()
+            ->with('fotos')
             ->paginate(10);
 
         return view('pages.favoritos.index', compact('favoritos'));
