@@ -99,7 +99,7 @@
                 </div>
 
                 <nav class="nav flex-column px-3 py-3">
-                    <a href="{{ route('anuncios-carros') }}" class="nav-link @if (request()->routeIs('anuncios-carros')) active @endif">
+                    <a href="{{ route('search.index') }}" class="nav-link @if (request()->routeIs('search.index')) active @endif">
                         <i class="bi bi-search me-2"></i> Buscar veículo
                     </a>
                     <a href="{{ route('anunciar') }}" class="nav-link @if (request()->routeIs('anunciar')) active @endif">
@@ -115,12 +115,12 @@
                     <a href="{{ route('alertas.index') }}" class="nav-link @if (request()->routeIs('alertas.*')) active @endif">
                         <i class="bi bi-bell me-2"></i> Alertas
                     </a>
-                    <a href="{{ route('minha-conta') }}" class="nav-link @if (request()->routeIs('minha-conta')) active @endif">
+                    <a href="{{ route('minha-conta') }}" class="nav-link @if(request()->routeIs('minha-conta')) active @endif">
                         <i class="bi bi-person me-2"></i> Minha conta
                     </a>
-                    <a href="{{ route('ajuda') }}" class="nav-link @if (request()->routeIs('ajuda')) active @endif">
-                        <i class="bi bi-question-circle me-2"></i> Ajuda
-                    </a>
+                    <div class="ms-4">
+                        <a href="{{ route('minha-conta') }}" class="nav-link py-1 text-muted">Editar dados</a>
+                    </div>
                     <form action="{{ route('logout') }}" method="POST" class="px-3 mt-3">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger w-100">

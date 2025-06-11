@@ -20,11 +20,8 @@ use App\Http\Controllers\FavoritosController;
 
 // Detalhes públicos de um anúncio
 Route::get('/anuncios/{id}', [AnuncioController::class, 'show'])
-     ->name('anuncio.show');
+    ->name('anuncio.show');
 
-// (Opcional) Lista de anúncios
-Route::get('/anuncios-carros', fn() => view('pages.anuncios.cars.search.list'))
-     ->name('anuncios-carros');
 
 /*
 |--------------------------------------------------------------------------
@@ -50,8 +47,8 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::post('logout', [LoginController::class, 'logout'])
-     ->name('logout')
-     ->middleware('auth');
+    ->name('logout')
+    ->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -64,14 +61,14 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
 
-     Route::get('/meus-anuncios/{id}/editar', [AnuncioController::class, 'edit'])->name('anuncios.edit');
+    Route::get('/meus-anuncios/{id}/editar', [AnuncioController::class, 'edit'])->name('anuncios.edit');
 
     // Atualiza os dados do anúncio
     Route::put('/meus-anuncios/{id}', [AnuncioController::class, 'update'])->name('anuncios.update');
 
     // Adicione esta linha para “Meus anúncios”
     Route::get('/meus-anuncios', [AnuncioController::class, 'index'])
-         ->name('anuncios.index');
+        ->name('anuncios.index');
 
     // Rota para página de Chat:
     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])
@@ -80,7 +77,7 @@ Route::middleware('auth')->group(function () {
 
     // Alertas
     Route::get('/alertas', [AlertasController::class, 'index'])
-         ->name('alertas.index');
+        ->name('alertas.index');
 
 
 
@@ -92,50 +89,50 @@ Route::middleware('auth')->group(function () {
 
     // lista de favoritos
     Route::get('/favoritos', [FavoritosController::class, 'index'])
-         ->name('favoritos.index');
+        ->name('favoritos.index');
 
     // adicionar/remover favoritos
     Route::post('/favoritos/{anuncio}',   [FavoritosController::class, 'store'])
-         ->name('favoritos.store');
+        ->name('favoritos.store');
 
     Route::delete('/favoritos/{anuncio}', [FavoritosController::class, 'destroy'])
-         ->name('favoritos.destroy');
+        ->name('favoritos.destroy');
 
 
 
     // “Minha Conta” — qualquer usuário logado pode ver
     Route::get('/minha-conta', [AccountController::class, 'index'])
-         ->name('minha-conta');
+        ->name('minha-conta');
     Route::post('/minha-conta', [AccountController::class, 'update'])
-         ->name('minha-conta.update');
+        ->name('minha-conta.update');
 
     // Tela de escolha de tipo de anúncio
-    Route::get('/anunciar', function(){
-    return view('pages.anuncios.opcao');
+    Route::get('/anunciar', function () {
+        return view('pages.anuncios.opcao');
     })->name('anunciar');
 
-   Route::prefix('anunciar/{tipoVeiculo}')
-     ->whereIn('tipoVeiculo', ['carro', 'moto'])
-     ->group(function () {
-        Route::get('/', [AnuncioController::class, 'step1'])->name('anuncio.step1');
-        Route::post('/etapa1', [AnuncioController::class, 'step1Post'])->name('anuncio.step1Post');
+    Route::prefix('anunciar/{tipoVeiculo}')
+        ->whereIn('tipoVeiculo', ['carro', 'moto'])
+        ->group(function () {
+            Route::get('/', [AnuncioController::class, 'step1'])->name('anuncio.step1');
+            Route::post('/etapa1', [AnuncioController::class, 'step1Post'])->name('anuncio.step1Post');
 
-        Route::get('/etapa2', [AnuncioController::class, 'step2'])->name('anuncio.step2');
-        Route::post('/etapa2', [AnuncioController::class, 'step2Post'])->name('anuncio.step2Post');
+            Route::get('/etapa2', [AnuncioController::class, 'step2'])->name('anuncio.step2');
+            Route::post('/etapa2', [AnuncioController::class, 'step2Post'])->name('anuncio.step2Post');
 
-        Route::get('/etapa3', [AnuncioController::class, 'step3'])->name('anuncio.step3');
-        Route::post('/etapa3', [AnuncioController::class, 'step3Post'])->name('anuncio.step3Post');
+            Route::get('/etapa3', [AnuncioController::class, 'step3'])->name('anuncio.step3');
+            Route::post('/etapa3', [AnuncioController::class, 'step3Post'])->name('anuncio.step3Post');
 
-        Route::get('/etapa4', [AnuncioController::class, 'step4'])->name('anuncio.step4');
-        Route::post('/etapa4', [AnuncioController::class, 'step4Post'])->name('anuncio.step4Post');
-    });
+            Route::get('/etapa4', [AnuncioController::class, 'step4'])->name('anuncio.step4');
+            Route::post('/etapa4', [AnuncioController::class, 'step4Post'])->name('anuncio.step4Post');
+        });
 
     // Tela de confirmação final (GET)
     Route::get('/anuncio/finalizar', [AnuncioController::class, 'finalizar'])
-         ->name('anuncio.finalizar');
+        ->name('anuncio.finalizar');
     // POST para salvar o anúncio com fotos
     Route::post('/anuncio/confirmar', [AnuncioController::class, 'confirmarAnuncio'])
-         ->name('anuncio.confirmar');
+        ->name('anuncio.confirmar');
 });
 
 /*
@@ -144,13 +141,13 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::get('password/forgot', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])
-     ->name('password.request');
+    ->name('password.request');
 Route::post('password/email', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])
-     ->name('password.email');
+    ->name('password.email');
 Route::get('password/reset/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])
-     ->name('password.reset');
+    ->name('password.reset');
 Route::post('password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])
-     ->name('password.update');
+    ->name('password.update');
 
 
 
@@ -166,7 +163,6 @@ Route::middleware(['location'])->group(function () {
 
 
 Route::post('/definir-localizacao', [LocationController::class, 'store'])
-     ->name('location.store');
+    ->name('location.store');
 
 Route::post('/definir-localizacao-cep', [LocationController::class, 'storeByCep']);
-

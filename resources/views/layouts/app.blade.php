@@ -49,7 +49,7 @@
                         <a class="nav-link" href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('anuncios-carros') }}">Anúncios</a>
+                        <a class="nav-link" href="{{ route('search.index') }}">Anúncios</a>
                     </li>
                 </ul>
 

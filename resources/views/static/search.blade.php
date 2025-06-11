@@ -194,12 +194,10 @@
         const applyCepBtn = document.getElementById("apply-cep");
         const cepResultado = document.getElementById("cep-resultado");
 
-        // abre e fecha modal
         locationText.addEventListener("click", () => modal.style.display = "block");
         closeModal.addEventListener("click", () => modal.style.display = "none");
         window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
-        // formata CEP
         cepInput.addEventListener("input", () => {
             let v = cepInput.value.replace(/\D/g, '').slice(0, 8);
             if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
@@ -207,7 +205,6 @@
             cepResultado.textContent = '';
         });
 
-        // aplicar CEP
         applyCepBtn.addEventListener("click", async () => {
             const raw = cepInput.value.replace(/\D/g, '');
             if (raw.length !== 8) {
@@ -229,7 +226,6 @@
             }
         });
 
-        // geolocalização
         geoBtn.addEventListener("click", () => {
             if (!navigator.geolocation) return console.warn("Geolocalização não suportada.");
             navigator.geolocation.getCurrentPosition(async pos => {
@@ -247,7 +243,6 @@
             }, err => console.warn(err.message));
         });
 
-        // todo o brasil
         brasilBtn.addEventListener("click", () => {
             locationText.innerHTML = `<i class="bi bi-globe2"></i> Todo o Brasil`;
             modal.style.display = "none";

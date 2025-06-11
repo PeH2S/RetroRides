@@ -67,7 +67,7 @@
             </div>
 
             <nav class="nav flex-column px-3 py-3">
-                <a href="{{ route('anuncios-carros') }}" class="nav-link @if(request()->routeIs('anuncios-carros')) active @endif">
+                <a href="{{ route('search.index') }}" class="nav-link @if(request()->routeIs('search.index')) active @endif">
                     <i class="bi bi-search me-2"></i> Buscar veículo
                 </a>
                 <a href="{{ route('anunciar') }}" class="nav-link @if(request()->routeIs('anunciar')) active @endif">

@@ -11,7 +11,6 @@
     <div class="alert alert-success">{{ session('success') }}</div>
   @endif
 
-  {{-- Formulário único envolvendo todos os campos e o botão --}}
   <form action="{{ route('minha-conta.update') }}" method="POST" novalidate>
     @csrf
     @method('PUT')
