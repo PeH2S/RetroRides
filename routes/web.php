@@ -12,8 +12,8 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FavoritosController;
-
-
+use App\Http\Controllers\MensagemController;
+use App\Http\Controllers\ChatController;
 
 //Route::get('/', [HomeController::class, 'Home'])->name('home');
 
@@ -56,6 +56,10 @@ Route::post('logout', [LoginController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+
+    Route::post('/mensagens', [MensagemController::class, 'store']);
+    Route::get('/conversas/{conversa}', [ChatController::class, 'show'])->name('conversas.show');
+
     // Dashboard — liberado para qualquer usuário logado
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 

@@ -18,6 +18,8 @@
     <!-- Seus estilos locais -->
     <link rel="stylesheet" href="{{ asset('css/stylesHome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/stylesNavBar.css') }}">
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
 </head>
 
 <body>
