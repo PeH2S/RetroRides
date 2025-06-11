@@ -74,6 +74,12 @@
     <div class="ms-4">
         <a href="{{ route('minha-conta') }}" class="nav-link py-1 text-muted">Editar dados</a>
     </div>
+    <div class="ms-4">
+        <a href="{{ route('favoritos.index') }}" class="nav-link @if(request()->routeIs('favoritos.index')) active @endif">
+        <i class="bi bi-heart me-2"></i> Favoritos
+    </a>
+    </div>
+
     <form action="{{ route('logout') }}" method="POST" class="px-3 mt-3">
         @csrf
         <button type="submit" class="btn btn-outline-danger w-100">

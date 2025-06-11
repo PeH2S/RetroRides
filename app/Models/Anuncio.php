@@ -41,4 +41,17 @@ class Anuncio extends Model
     {
         return $this->hasMany(AnuncioFoto::class);
     }
+
+    public function favoritadoPor()
+    {
+        return $this->belongsToMany(User::class, 'favoritos')
+            ->withTimestamps();
+    }
+
+    public function getEstaFavoritadoAttribute()
+    {
+        return auth()->check() && $this->favoritadoPor()
+            ->where('user_id', auth()->id())
+            ->exists();
+    }
 }

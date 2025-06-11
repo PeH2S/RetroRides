@@ -47,4 +47,31 @@ class ChatController extends Controller
 
         return view('pages.chat.list', compact('conversas'));
     }
+    public function updaterStatus(Request $request, Conversa $conversa)
+    {
+        $request->validate([
+            'status' => 'required|in:finalizado,cancelado',
+        ]);
+
+        $user = auth()->user();
+
+        if ($request->status === 'cancelado' && $user->id !== $conversa->comprador_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Você não tem permissão para cancelar esta conversa.'
+            ], 403);
+        }
+
+        if ($request->status === 'finalizado' && $user->id !== $conversa->anunciante_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Você não tem permissão para finalizar esta conversa.'
+            ], 403);
+        }
+
+        $conversa->anuncio->status = $request->status;
+        $conversa->anuncio->save();
+
+        return response()->json(['success' => true]);
+    }
 }

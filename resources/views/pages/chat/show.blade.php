@@ -260,19 +260,17 @@
                 mensagens: @json($conversa->mensagens),
                 typing: false,
                 typingTimer: null,
+                anuncioStatus: '{{ $conversa->anuncio->status }}',
 
                 init() {
-                    // Rolagem inicial para baixo
                     this.$nextTick(() => {
                         this.scrollToBottom();
                     });
 
-                    // Configuração do Echo
+                    // Echo config
                     const waitForEcho = setInterval(() => {
                         if (window.Echo?.connector?.pusher?.connection?.state) {
                             clearInterval(waitForEcho);
-
-                            // Canal para receber mensagens
                             Echo.channel('conversa.' + this.conversaId)
                                 .listen('.nova.mensagem', (e) => {
                                     this.mensagens.push(e.mensagem);
@@ -291,13 +289,47 @@
                         }
                     }, 100);
 
-                    // Verificar novas mensagens periodicamente
                     setInterval(() => {
                         this.checkNewMessages();
                     }, 10000);
 
-                    // Marcar mensagens como lidas
                     this.markAsRead();
+                },
+                atualizarStatus(novoStatus) {
+                    fetch(`/conversas/${this.conversaId}/atualizar-status`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: JSON.stringify({
+                                status: novoStatus
+                            }),
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.anuncioStatus = novoStatus;
+                                alert(`Conversa foi ${novoStatus}.`);
+                            } else {
+                                alert('Erro ao atualizar status. Tente novamente.');
+                            }
+                        })
+                        .catch(() => {
+                            alert('Erro ao atualizar status. Tente novamente.');
+                        });
+                },
+
+                cancelarConversa() {
+                    if (confirm('Tem certeza que deseja cancelar a conversa?')) {
+                        this.atualizarStatus('cancelado');
+                    }
+                },
+
+                finalizarConversa() {
+                    if (confirm('Tem certeza que deseja finalizar a conversa?')) {
+                        this.atualizarStatus('finalizado');
+                    }
                 },
 
                 formatTime(timestamp) {

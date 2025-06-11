@@ -39,12 +39,7 @@ class User extends Authenticatable
         return $this->hasMany(Anuncio::class);
     }
 
-    public function favoritos()
-    {
-        return $this->belongsToMany(Anuncio::class, 'favoritos')
-                    ->withTimestamps();
-    }
-    
+
     /**
      * Get the attributes that should be cast.
      *
@@ -72,5 +67,28 @@ class User extends Authenticatable
     {
         return $this->hasOne(Phone::class);
     }
+    public function avaliacoesRecebidas()
+    {
+        return $this->hasMany(Avaliacao::class, 'anunciante_id');
+    }
 
+    public function avaliacoesFeitas()
+    {
+        return $this->hasMany(Avaliacao::class, 'avaliador_id');
+    }
+
+    public function getMediaAvaliacoesAttribute()
+    {
+        return $this->avaliacoesRecebidas()->avg('nota');
+    }
+    public function favoritos()
+    {
+        return $this->hasMany(Favorito::class);
+    }
+
+    public function anunciosFavoritados()
+    {
+        return $this->belongsToMany(Anuncio::class, 'favoritos')
+            ->withTimestamps();
+    }
 }

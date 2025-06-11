@@ -1,41 +1,42 @@
 <?php
 
-namespace App\Http\Controllers;  
+namespace App\Http\Controllers;
 
+use App\Models\Anuncio;
+use App\Models\Favorito;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Anuncio;
-use App\Http\Controllers\Controller;
 
 class FavoritosController extends Controller
 {
-    public function __construct()
+    public function toggle(Anuncio $anuncio)
     {
-        $this->middleware('auth');
+        if (!Auth::check()) {
+            return response()->json(['error' => 'Faça login para favoritar'], 401);
+        }
+
+        $favorito = Favorito::where('user_id', Auth::id())
+            ->where('anuncio_id', $anuncio->id)
+            ->first();
+
+        if ($favorito) {
+            $favorito->delete();
+            return response()->json(['action' => 'removed', 'count' => $anuncio->favoritadoPor()->count()]);
+        } else {
+            Favorito::create([
+                'user_id' => Auth::id(),
+                'anuncio_id' => $anuncio->id
+            ]);
+            return response()->json(['action' => 'added', 'count' => $anuncio->favoritadoPor()->count()]);
+        }
     }
 
     public function index()
     {
-        $favoritos = Auth::user()
-                         ->favoritos()
-                         ->with('fotos')
-                         ->get();
+        $favoritos = auth()->user()->anunciosFavoritados()
+            ->with(['fotos', 'user'])
+            ->paginate(10);
 
         return view('pages.favoritos.index', compact('favoritos'));
-    }
-
-    public function store(Anuncio $anuncio)
-    {
-        $user = Auth::user();
-        if (! $user->favoritos->contains($anuncio->id)) {
-            $user->favoritos()->attach($anuncio->id);
-        }
-        return back();
-    }
-
-    public function destroy(Anuncio $anuncio)
-    {
-        Auth::user()->favoritos()->detach($anuncio->id);
-        return back();
     }
 }

@@ -14,6 +14,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FavoritosController;
 use App\Http\Controllers\MensagemController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\AvaliacaoController;
+
 
 //Route::get('/', [HomeController::class, 'Home'])->name('home');
 
@@ -65,8 +67,11 @@ Route::middleware('auth')->group(function () {
         ]);
     });
 
-     Route::post('/chat/iniciar', [ChatController::class, 'store'])->name('chat.store');
-     Route::get('/chats', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/conversas/{conversa}/atualizar-status', [ChatController::class, 'atualizarStatus'])->name('conversas.atualizar-status');
+
+
+    Route::post('/chat/iniciar', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('/chats', [ChatController::class, 'index'])->name('chat.index');
     // Dashboard — liberado para qualquer usuário logado
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
@@ -110,7 +115,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/favoritos/{anuncio}', [FavoritosController::class, 'destroy'])
         ->name('favoritos.destroy');
 
+    Route::post('/anuncios/{anuncio}/avaliar', [AvaliacaoController::class, 'store'])
+    ->name('avaliacoes.store');
 
+    Route::post('/anuncios/{anuncio}/favoritar', [FavoritosController::class, 'toggle'])
+        ->name('favoritos.toggle');
 
     // “Minha Conta” — qualquer usuário logado pode ver
     Route::get('/minha-conta', [AccountController::class, 'index'])
