@@ -21,29 +21,82 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar-expand-lg " style="margin-bottom: 5em;">
-        <div class="w-100">
-            @include('static.navBar_Header')
+    <!-- Navbar Principal -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm" style="margin-bottom: 5em;">
+        <div class="container">
+            <!-- Marca -->
+            <a class="navbar-brand fw-bold text-orange" href="{{ route('home') }}">
+                <span style="color: #004E64">Retro Riders</span>
+            </a>
+
+            <!-- Toggle Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('search.index') }}">Comprar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('anunciar') }}">Vender</a></li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    @guest
+                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Entrar</a></li>
+                        @if(Route::has('register'))
+                            <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Registrar</a></li>
+                        @endif
+                    @else
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ \Illuminate\Support\Str::limit(Auth::user()->name, 15) }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser" style="min-width: 8rem;">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">Meu painel</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Sair</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Ícone de Favoritos: agora aponta para sua rota de favoritos -->
+                        <li class="nav-item">
+                            <a class="nav-link ms-3" href="{{ route('favoritos.index') }}" title="Meus Favoritos">
+                                <i class="bi bi-heart"></i>
+                            </a>
+                        </li>
+
+                        <!-- Ícone de Chat (mantenha o href que preferir) -->
+                        <li class="nav-item">
+                            <a class="nav-link ms-3" href="#" title="Chat">
+                                <i class="bi bi-chat"></i>
+                            </a>
+                        </li>
+                    @endguest
+                </ul>
+            </div>
         </div>
     </nav>
 
-
-    @yield('main')
-
+    {{-- Conteúdo principal --}}
+    <main class="pt-5 mt-3">
+        @yield('main')
+    </main>
 
     <!-- Rodapé -->
     @include('static.footer')
 
+    <!-- Script de localização -->
     <script>
         const isSearchPage = window.location.pathname.includes('/search');
 
         async function handleLocation(position) {
-            const {
-                latitude,
-                longitude
-            } = position.coords;
-
+            const { latitude, longitude } = position.coords;
             try {
                 const response = await fetch('/definir-localizacao', {
                     method: 'POST',
@@ -51,16 +104,10 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
-                    body: JSON.stringify({
-                        latitude,
-                        longitude
-                    })
+                    body: JSON.stringify({ latitude, longitude })
                 });
-
                 if (!response.ok) throw new Error(await response.text());
-
                 const data = await response.json();
-
                 if (isSearchPage) {
                     const url = new URL(window.location.href);
                     url.searchParams.set('localizacao', `${latitude},${longitude}x100km`);
@@ -87,12 +134,9 @@
         }
     </script>
 
-
-
-
-
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 
 </html>

@@ -1,48 +1,38 @@
-document.getElementById("cep-input").addEventListener("keydown", async function (e) {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        const cep = this.value.replace(/\D/g, '');
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('location-modal');
+  const abrir = document.getElementById('btn-abrir-modal');
+  const fechar = document.getElementById('btn-fechar-modal');
+  const form = document.getElementById('form-cep');
+  const textoLocal = document.getElementById('user-location-text');
 
-        if (cep.length !== 8) {
-            document.getElementById("cep-resultado").textContent = "CEP inválido. Digite 8 números.";
-            return;
-        }
+  abrir.addEventListener('click', () => modal.style.display = 'block');
+  fechar.addEventListener('click', () => modal.style.display = 'none');
 
-        try {
-            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-            const data = await response.json();
-
-            if (data.erro) {
-                document.getElementById("cep-resultado").textContent = "CEP não encontrado.";
-                return;
-            }
-
-            document.getElementById("cep-resultado").textContent = `${data.localidade} - ${data.uf}`;
-
-            // Salvar na sessão via Laravel
-            const salvar = await fetch("/definir-localizacao", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: JSON.stringify({
-                    latitude: null,
-                    longitude: null,
-                    cidade: data.localidade,
-                    estado: data.uf
-                })
-            });
-
-            const res = await salvar.json();
-
-            if (res.sucesso) {
-                document.getElementById("user-location-text").innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${data.localidade} - ${data.uf}`;
-                document.getElementById("location-modal").style.display = "none";
-            }
-
-        } catch (error) {
-            document.getElementById("cep-resultado").textContent = "Erro ao buscar o CEP.";
-        }
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const cep = e.target.cep.value.replace(/\D/g, '');
+    const resCep = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await resCep.json();
+    if (data.erro) {
+      alert('CEP não encontrado');
+      return;
     }
+    // envia para o nosso controller
+    const res = await fetch('/definir-localizacao-cep', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        cidade: data.localidade,
+        estado: data.uf
+      })
+    });
+    const json = await res.json();
+    if (json.sucesso) {
+      textoLocal.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${data.localidade} - ${data.uf}`;
+      modal.style.display = 'none';
+    }
+  });
 });

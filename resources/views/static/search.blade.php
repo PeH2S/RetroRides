@@ -30,7 +30,8 @@
         cursor: pointer;
     }
 
-    .filtros input[type="checkbox"] {
+    .filtros input[type="checkbox"],
+    .filtros input[type="radio"] {
         accent-color: white;
         margin: 0;
     }
@@ -85,13 +86,14 @@
         width: 90%;
         max-width: 400px;
         border-radius: 10px;
+        position: relative;
     }
 
     .location-modal .close {
         float: right;
         font-size: 28px;
         cursor: pointer;
-        color: #333
+        color: #333;
     }
 
     .location-modal h5,
@@ -101,12 +103,10 @@
 
     .location-modal-content button {
         color: #013746;
-
     }
 
     .location-modal-content button:hover {
         background-color: #013746;
-
     }
 
     .filtro-item input[type="radio"]:checked+span,
@@ -166,14 +166,15 @@
             <div class="location-modal-content">
                 <span class="close">&times;</span>
                 <h5>Defina a localização</h5>
-                <input type="text" class="form-control mb-3" id="cep-input" placeholder="Digite o seu CEP ou cidade">
+                <input id="cep-input" type="text" class="form-control mb-3" placeholder="00000-000">
+                <button type="button" id="apply-cep" class="btn btn-primary w-100 mb-3">Aplicar CEP</button>
                 <p id="cep-resultado" class="mt-2 text-muted"></p>
                 <div>
                     <p><strong>Pesquisar por</strong></p>
                     <button type="button" class="btn btn-outline-dark w-100 mb-2" id="usar-geolocalizacao">
                         <i class="bi bi-geo-alt-fill"></i> Localização atual
                     </button>
-                    <button type="button" class="btn btn-outline-dark w-100">
+                    <button type="button" class="btn btn-outline-dark w-100" id="todo-brasil">
                         <i class="bi bi-globe2"></i> Todo o Brasil
                     </button>
                 </div>
@@ -182,53 +183,74 @@
     </div>
 </section>
 
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const locationText = document.getElementById("user-location-text");
         const modal = document.getElementById("location-modal");
         const closeModal = modal.querySelector(".close");
         const geoBtn = document.getElementById("usar-geolocalizacao");
+        const brasilBtn = document.getElementById("todo-brasil");
+        const cepInput = document.getElementById("cep-input");
+        const applyCepBtn = document.getElementById("apply-cep");
+        const cepResultado = document.getElementById("cep-resultado");
 
-        locationText.addEventListener("click", () => {
-            modal.style.display = "block";
+        // abre e fecha modal
+        locationText.addEventListener("click", () => modal.style.display = "block");
+        closeModal.addEventListener("click", () => modal.style.display = "none");
+        window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
+
+        // formata CEP
+        cepInput.addEventListener("input", () => {
+            let v = cepInput.value.replace(/\D/g, '').slice(0, 8);
+            if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+            cepInput.value = v;
+            cepResultado.textContent = '';
         });
 
-        closeModal.addEventListener("click", () => {
-            modal.style.display = "none";
-        });
-
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) modal.style.display = "none";
-        });
-
-        geoBtn.addEventListener("click", () => {
-            if (!navigator.geolocation) {
-                return console.warn("Geolocalização não suportada.");
+        // aplicar CEP
+        applyCepBtn.addEventListener("click", async () => {
+            const raw = cepInput.value.replace(/\D/g, '');
+            if (raw.length !== 8) {
+                cepResultado.textContent = 'CEP inválido';
+                return;
             }
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
+                const data = await res.json();
+                if (data.erro) {
+                    cepResultado.textContent = 'CEP não encontrado';
+                    return;
+                }
+                const texto = `${data.localidade} - ${data.uf}`;
+                locationText.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${texto}`;
+                modal.style.display = "none";
+            } catch (e) {
+                cepResultado.textContent = 'Erro ao buscar CEP';
+            }
+        });
 
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const {
-                    latitude: lat,
-                    longitude: lon
-                } = position.coords;
-
+        // geolocalização
+        geoBtn.addEventListener("click", () => {
+            if (!navigator.geolocation) return console.warn("Geolocalização não suportada.");
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const { latitude: lat, longitude: lon } = pos.coords;
                 try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
-                    const data = await response.json();
-                    const cidade = data.address.city || data.address.town || data.address.village || '';
-                    const estado = data.address.state || '';
-
-                    if (cidade || estado) {
-                        locationText.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${cidade} - ${estado}`;
-                    }
+                    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                    const d = await r.json();
+                    const city = d.address.city || d.address.town || d.address.village || '';
+                    const state = d.address.state || '';
+                    locationText.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${city} - ${state}`;
                     modal.style.display = "none";
                 } catch (err) {
-                    console.error("Erro ao obter localização:", err);
+                    console.error(err);
                 }
-            }, (err) => {
-                console.warn("Permissão negada:", err.message);
-            });
+            }, err => console.warn(err.message));
+        });
+
+        // todo o brasil
+        brasilBtn.addEventListener("click", () => {
+            locationText.innerHTML = `<i class="bi bi-globe2"></i> Todo o Brasil`;
+            modal.style.display = "none";
         });
     });
 </script>

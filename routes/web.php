@@ -11,6 +11,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FavoritosController;
 
 
 
@@ -88,6 +89,20 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class);
     });
 
+
+    // lista de favoritos
+    Route::get('/favoritos', [FavoritosController::class, 'index'])
+         ->name('favoritos.index');
+
+    // adicionar/remover favoritos
+    Route::post('/favoritos/{anuncio}',   [FavoritosController::class, 'store'])
+         ->name('favoritos.store');
+
+    Route::delete('/favoritos/{anuncio}', [FavoritosController::class, 'destroy'])
+         ->name('favoritos.destroy');
+
+
+
     // “Minha Conta” — qualquer usuário logado pode ver
     Route::get('/minha-conta', [AccountController::class, 'index'])
          ->name('minha-conta');
@@ -152,4 +167,6 @@ Route::middleware(['location'])->group(function () {
 
 Route::post('/definir-localizacao', [LocationController::class, 'store'])
      ->name('location.store');
+
+Route::post('/definir-localizacao-cep', [LocationController::class, 'storeByCep']);
 
