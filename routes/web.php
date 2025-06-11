@@ -59,6 +59,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/mensagens', [MensagemController::class, 'store']);
     Route::get('/conversas/{conversa}', [ChatController::class, 'show'])->name('conversas.show');
+    Route::get('/conversas/{conversa}/mensagens/check', function (\App\Models\Conversa $conversa) {
+        return response()->json([
+            'total' => $conversa->mensagens()->count(),
+        ]);
+    });
 
     // Dashboard — liberado para qualquer usuário logado
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');

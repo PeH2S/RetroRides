@@ -26,9 +26,16 @@ class NovaMensagem implements ShouldBroadcast
     {
         return new Channel('conversa.' . $this->mensagem->conversa_id);
     }
-    
+
+    public function broadcastWith()
+    {
+        return [
+            'mensagem' => $this->mensagem
+        ];
+    }
+
     public function broadcastAs()
     {
-        return 'NovaMensagem';
+        return 'nova.mensagem'; 
     }
 }
