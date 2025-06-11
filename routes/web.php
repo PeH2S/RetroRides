@@ -82,9 +82,6 @@ Route::middleware('auth')->group(function () {
          ->name('alertas.index');
 
 
-    // Ajuda
-    Route::get('/ajuda', [AjudaController::class, 'index'])
-         ->name('ajuda');
 
     // CRUD de usuários → apenas admin (ID = 1)
     Route::middleware('isAdmin')->group(function () {
