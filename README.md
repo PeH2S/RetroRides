@@ -1,166 +1,136 @@
-#  RetroRides - Projeto Laravel para Cadastro e Consulta de Veículos
+# 🚗 RetroRides – Plataforma de Anúncios de Veículos
 
-Este é um projeto Laravel 12 desenvolvido com o objetivo de criar uma plataforma para anúncios e consultas de veículos, integrando com a API FIPE v2 para dados automotivos e contando com um sistema estruturado de criação de anúncios para carros e motos.
+Sistema Laravel 12 para criação e consulta de anúncios de carros e motos, com integração à API FIPE v2 para dados automotivos e suporte a upload de fotos, cache e filas.
 
 ---
 
-## ✅ Requisitos do Projeto
+## ✅ Requisitos
 
-- PHP >= 8.2
+- PHP 8.2+
 - Composer
-- MySQL/MariaDB
+- MySQL ou MariaDB
 - Node.js + NPM
-- Redis (opcional para cache)
+- Redis (opcional)
 - Laravel CLI (opcional)
-- Navegador moderno
 
 ---
 
-## 🔧 Instalação
-
-1. **Clone o projeto**
+## ⚙️ Instalação
 
 ```bash
 git clone <URL_DO_REPOSITORIO>
 cd RetroRides
-```
 
-2. **Instale as dependências do PHP**
-
-```bash
 composer install
-```
-
-
-3. **Configure o ambiente**
-
-```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Edite o arquivo `.env` com suas configurações de banco e token da API FIPE:
+Configure o `.env` com:
 
 ```env
 DB_DATABASE=laravel
 DB_USERNAME=root
 DB_PASSWORD=
 
-FIPE_API_TOKEN="seu_token_aqui"
+FIPE_API_TOKEN=seu_token
+GOOGLE_CLIENT_ID=seu_id
+GOOGLE_CLIENT_SECRET=seu_secret
+GOOGLE_REDIRECT_URI=http://localhost:8000/login/google/callback
 ```
-
-4. **Execute as migrações**
 
 ```bash
 php artisan migrate
-```
-
-
-5. **Inicie o servidor local**
-
-```bash
 php artisan serve
 ```
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## 🗂️ Estrutura
 
-### Backend
-
-- `app/Http/Controllers`
-  - `AnuncioController.php` – Controle de anúncios
-  - `CarDataController.php` – Comunicação com API FIPE
-- `app/Models`
-  - `Anuncio.php`, `AnuncioFoto.php`, `User.php`
-- `app/Services`
-  - `CarApiService.php` – Serviço responsável pelas chamadas à API externa
-- `routes/`
-  - `web.php`, `api.php` – Rotas da aplicação
-
-### Banco de Dados
-
-- `database/migrations/` – Estrutura das tabelas: `users`, `anuncios`, `anuncio_fotos`, `cache`, `jobs`
-- `database/seeders/` – Seeders para popular o banco (em desenvolvimento)
-
-### Frontend
-
-- `resources/views`
-  - `pages/anuncios/cars_create/` – Telas de cadastro multi-etapas de carros (`step2`, `step3`, etc)
-  - `pages/anuncios/moto/` – Telas de cadastro de motos
-  - `static/` – Layouts, banner, footer
-- `public/css/` – Estilos separados por página
-- `public/js/` – Scripts JS dos formulários
-
----
-
-## 🧪 Scripts Úteis
-
-Você pode rodar o servidor com múltiplos serviços usando o script do `composer.json`:
-
-```bash
-composer run dev
-```
-
-Este comando executa simultaneamente:
-- `php artisan serve`
-- `php artisan queue:listen`
-- `php artisan pail` (log viewer)
-
+- **Controllers:** Anúncios, API FIPE, autenticação  
+- **Models:** Anuncio, User, Fotos, etc.  
+- **Services:** API FIPE (CarApiService)  
+- **Views:** Blade com layouts modulares, cadastros multi-etapas (carros/motos)  
+- **Migrations:** Estrutura de usuários, anúncios, fotos, jobs, cache  
+- **Public:** CSS e JS por página  
 
 ---
 
 ## 🚀 Funcionalidades
 
-- Cadastro passo-a-passo de anúncios de carros e motos
-- Upload de fotos de anúncios
-- Consulta de dados FIPE por marca, modelo, ano
-- Integração via serviço interno com API externa
-- Separação de layouts reutilizáveis (Blade)
-- Cache e fila de jobs configurados com banco
+- Cadastro multi-etapas de carros e motos  
+- Integração completa com API FIPE v2  
+- Upload de imagens com preview  
+- Sistema de favoritos, busca e filtros  
+- Cache de requisições e filas com suporte Redis  
+- Login com Google via OAuth  
+- Notificações em tempo real com Pusher  
 
 ---
 
-## 🔐 Autenticação API FIPE
+## 🔧 Scripts Úteis
 
-O token da API FIPE deve ser adicionado no `.env`:
-
-```env
-FIPE_API_TOKEN=seu_token
-GOOGLE_CLIENT_ID=SEU_CLIENT_ID
-GOOGLE_CLIENT_SECRET=SEU_CLIENT_SECRET
-GOOGLE_REDIRECT_URI=http://localhost:8000/login/google/callback
-Substitua pelo domínio real do seu app em produção.
+```bash
+composer run dev
 ```
 
-A autenticação é gerenciada no `CarApiService.php`.
+Executa simultaneamente:
+- `php artisan serve`  
+- `php artisan queue:listen`  
+- `php artisan pail` (visualizador de logs)  
+
+---
+
+## 🔐 Integração com API FIPE e Google
+
+Certifique-se de preencher no `.env`:
+
+```env
+FIPE_API_TOKEN=...
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=http://localhost:8000/login/google/callback
+```
+
+---
+
+## 🌐 Configuração SSL (Windows)
+
+Baixe o arquivo: [cacert.pem](https://curl.se/ca/cacert.pem)  
+Salve, por exemplo, em:
+
+```
+C:\php\extras\ssl\cacert.pem
+```
+
+E no seu `php.ini`, ajuste:
+
+```ini
+curl.cainfo = "C:\php\extras\ssl\cacert.pem"
+openssl.cafile = "C:\php\extras\ssl\cacert.pem"
+```
+
+Reinicie o servidor.
+
+---
+
+## 📡 WebSockets com Pusher
+
+No `.env`:
+
+```env
+BROADCAST_DRIVER=pusher
+
+PUSHER_APP_ID=2006092
+PUSHER_APP_KEY=c315c4e2f577feb87dce
+PUSHER_APP_SECRET=a58893f2e2d350df0f8c
+PUSHER_APP_CLUSTER=sa1
+```
 
 ---
 
 ## 📄 Licença
 
-Projeto open-source para fins educacionais. Desenvolvido por Vinicius Thales.
-
----
-
-## 📝 Autor
-
-Vinicius Thales  
-Email: viniciusthales486@gmail.com  
-Framework: Laravel 12  
-Baixe o arquivo atualizado:
-
-https://curl.se/ca/cacert.pem
-
-Coloque ele numa pasta acessível no seu computador, por exemplo:
-
-C:\php\extras\ssl\cacert.pem
-
-No seu arquivo php.ini (aquele usado pelo PHP que roda seu projeto Laravel), configure essas linhas (descomentando e apontando para o caminho correto):
-
-ini
-Copiar
-Editar
-curl.cainfo = "C:\php\extras\ssl\cacert.pem"
-openssl.cafile = "C:\php\extras\ssl\cacert.pem"
-Reinicie seu servidor web ou seu ambiente para aplicar as alterações.
+Projeto open-source com fins educacionais.  
+Desenvolvido por **Vinicius Thales** – [viniciusthales486@gmail.com](mailto:viniciusthales486@gmail.com)
