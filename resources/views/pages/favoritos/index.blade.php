@@ -34,7 +34,7 @@
                   </div>
                 </div>
                 <div class="card-footer bg-white d-flex justify-content-between">
-                  <a href="{{ route('anuncios.show', $anuncio) }}" class="btn btn-sm btn-primary">Ver Detalhes</a>
+                  <a href="{{ route('anuncio.show', $anuncio->id) }}" class="btn btn-sm btn-primary">Ver Detalhes</a>
                   <button class="btn btn-sm btn-outline-danger toggle-favorite" data-anuncio-id="{{ $anuncio->id }}">
                     <i class="bi bi-heart-fill"></i> Remover
                   </button>
