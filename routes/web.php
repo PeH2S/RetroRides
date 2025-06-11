@@ -95,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/favoritos/{anuncio}',        [FavoritosController::class, 'destroy'])->name('favoritos.destroy');
     Route::post('/anuncios/{anuncio}/favoritar', [FavoritosController::class, 'toggle'])->name('favoritos.toggle');
     Route::post('/anuncios/{anuncio}/avaliar',   [AvaliacaoController::class, 'store'])->name('avaliacoes.store');
+    Route::get('/minhas-avaliacoes', [AvaliacaoController::class, 'minhasAvaliacoes'])->name('avaliacoes.minhas');
 
     // CRUD Usuários (Admin)
     Route::middleware('isAdmin')->group(function(){

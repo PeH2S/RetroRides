@@ -34,4 +34,15 @@ class AvaliacaoController extends Controller
 
         return back()->with('success', 'Avaliação enviada com sucesso!');
     }
+    public function minhasAvaliacoes()
+    {
+        $avaliacoes = Avaliacao::with(['avaliador', 'anuncio'])
+            ->where('anunciante_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $mediaAvaliacoes = auth()->user()->avaliacoesRecebidas()->avg('nota');
+
+        return view('pages.avaliacoes.minhas', compact('avaliacoes', 'mediaAvaliacoes'));
+    }
 }
