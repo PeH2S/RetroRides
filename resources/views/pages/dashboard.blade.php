@@ -57,43 +57,7 @@
     <div class="row">
         {{-- Menu lateral --}}
         <div class="col-md-3 bg-white border-end min-vh-100 p-0">
-            <div class="text-center py-4 border-bottom">
-                <div class="rounded-circle text-white mx-auto mb-2 sidebar-avatar d-flex justify-content-center align-items-center">
-                    {{ strtoupper(Auth::user()->name[0]) }}
-                </div>
-                <strong class="d-block">{{ Auth::user()->name }}</strong>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
-            </div>
-
-            <nav class="nav flex-column px-3 py-3">
-                <a href="{{ route('search.index') }}" class="nav-link @if(request()->routeIs('search.index')) active @endif">
-                    <i class="bi bi-search me-2"></i> Buscar veículo
-                </a>
-                <a href="{{ route('anunciar') }}" class="nav-link @if(request()->routeIs('anunciar')) active @endif">
-                    <i class="bi bi-cash-stack me-2"></i> Vender meu veículo
-                </a>
-                <a href="{{ route('anuncios.index') }}" class="nav-link @if(request()->routeIs('anuncios.*')) active @endif">
-                    <i class="bi bi-megaphone me-2"></i> Meus anúncios
-                </a>
-                <a href="{{ route('chat.index') }}" class="nav-link @if(request()->routeIs('chat.*')) active @endif">
-                    <i class="bi bi-chat-dots me-2"></i> Chat
-                </a>
-                <a href="{{ route('alertas.index') }}" class="nav-link @if(request()->routeIs('alertas.*')) active @endif">
-                    <i class="bi bi-bell me-2"></i> Alertas
-                </a>
-                    <a href="{{ route('minha-conta') }}" class="nav-link @if(request()->routeIs('minha-conta')) active @endif">
-                        <i class="bi bi-person me-2"></i> Minha conta
-                    </a>
-                    <div class="ms-4">
-                        <a href="{{ route('minha-conta') }}" class="nav-link py-1 text-muted">Editar dados</a>
-                    </div>
-                <form action="{{ route('logout') }}" method="POST" class="px-3 mt-3">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-danger w-100">
-                        <i class="bi bi-box-arrow-right me-2"></i> Sair
-                    </button>
-                </form>
-            </nav>
+            @include('components.sidebar-menu')
         </div>
 
         {{-- Conteúdo principal --}}

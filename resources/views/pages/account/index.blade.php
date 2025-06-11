@@ -1,4 +1,3 @@
-{{-- resources/views/pages/account/index.blade.php --}}
 @extends('pages.dashboard')
 
 @section('title', 'Minha Conta')

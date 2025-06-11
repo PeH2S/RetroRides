@@ -24,10 +24,16 @@ class AnuncioController extends Controller
 
     public function index()
     {
-        $status = request('status', 'ativo');
+        $statusParam = request('status');
+
+        if (request()->is('anuncios.index')) {
+            $statusList = ['ativo', 'finalizado', 'cancelado'];
+        } else {
+            $statusList = $statusParam ? [$statusParam] : ['ativo'];
+        }
 
         $meusAnuncios = Anuncio::where('user_id', Auth::id())
-            ->where('status', $status)
+            ->whereIn('status', $statusList)
             ->orderBy('created_at', 'desc')
             ->paginate(9);
 
@@ -342,7 +348,17 @@ class AnuncioController extends Controller
 
         $anuncio->update($validator->validated());
 
-         return redirect()->route('anuncios.index')->with('success', 'Anúncio atualizado com sucesso.');
+        return redirect()->route('anuncios.index')->with('success', 'Anúncio atualizado com sucesso.');
+    }
+    public function updateStatus(Request $request, Anuncio $anuncio)
+    {
+        $validStatus = ['ativo', 'inativo', 'finalizado', 'cancelado'];
 
+        if (!in_array($request->status, $validStatus)) {
+            return back()->with('error', 'Status inválido');
+        }
+
+        $anuncio->update(['status' => $request->status]);
+        return back()->with('success', 'Status do anúncio atualizado com sucesso');
     }
 }

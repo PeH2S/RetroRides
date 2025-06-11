@@ -65,12 +65,15 @@ Route::middleware('auth')->group(function () {
         ]);
     });
 
+     Route::post('/chat/iniciar', [ChatController::class, 'store'])->name('chat.store');
+     Route::get('/chats', [ChatController::class, 'index'])->name('chat.index');
     // Dashboard — liberado para qualquer usuário logado
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
     Route::delete('/meus-anuncios/{id}', [AnuncioController::class, 'destroy'])->name('anuncios.destroy');
 
     Route::get('/meus-anuncios/{id}/editar', [AnuncioController::class, 'edit'])->name('anuncios.edit');
+    Route::patch('/meus-anuncios/status/{anuncio}', [AnuncioController::class, 'updateStatus'])->name('anuncios.update-status');
 
     // Atualiza os dados do anúncio
     Route::put('/meus-anuncios/{id}', [AnuncioController::class, 'update'])->name('anuncios.update');

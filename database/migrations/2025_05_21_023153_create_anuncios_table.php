@@ -32,7 +32,7 @@ return new class extends Migration
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('cidade')->nullable();
             $table->string('estado')->nullable();
-            $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->enum('status', ['ativo', 'inativo', 'finalizado', 'cancelado'])->default('ativo');
             $table->enum('tipo_veiculo', ['carro', 'moto']);
             $table->timestamps();
         });
